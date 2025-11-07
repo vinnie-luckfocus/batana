@@ -1,0 +1,15 @@
+    # Core deep learning stack (CUDA users should install matching CUDA toolkit separately)
+    # torch>=2.1.0
+    # torchvision>=0.16.0
+
+    # OpenMMLab ecosystem
+    mmengine>=0.10.3
+    mmcv>=2.0.1,<2.2.0
+    mmdet>=3.1.0,<3.3.0
+    mmpose>=1.1.0
+
+    # Utility
+    opencv-python>=4.9.0.80
+    # numpy>=1.26.4,<2.0.0
+    # matplotlib>=3.7.0
+    # tqdm>=4.66.0
