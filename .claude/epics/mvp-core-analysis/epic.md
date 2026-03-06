@@ -1,11 +1,11 @@
 ---
 name: mvp-core-analysis
-status: completed
+status: in-progress
 created: 2026-03-05T15:13:21Z
-updated: 2026-03-06T03:40:00Z
+updated: 2026-03-06T08:29:33Z
 progress: 100%
 prd: .claude/prds/mvp-core-analysis.md
-github: https://github.com/vinnie-luckfocus/batana/issues/1
+github: https://github.com/vinnie-luckfocus/batana/issues/10
 ---
 
 # Epic: mvp-core-analysis

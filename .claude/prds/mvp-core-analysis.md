@@ -1,16 +1,16 @@
 ---
 name: mvp-core-analysis
 description: MVP 阶段核心分析能力，实现视频录制、姿态识别、基础评分与本地存储的端到端链路
-status: backlog
+status: in-progress
 created: 2026-03-05T14:57:15Z
-updated: 2026-03-06T00:00:00Z
+updated: 2026-03-06T08:25:35Z
 ---
 
 # PRD: mvp-core-analysis
 
 ## Executive Summary
 
-mvp-core-analysis 是 batana 项目的第一阶段交付，目标是验证"用户拍摄挥棒视频即可获得量化评分与改进建议"这一核心价值假设。通过 Flutter 跨平台框架 + MediaPipe Pose 本地推理 + 规则评分引擎，实现从视频录制到分析结果展示的完整闭环，为后续迭代奠定技术与产品基础。
+mvp-core-analysis 是 batana 项目的第一阶段交付，目标是验证"用户拍摄挥棒视频即可获得量化评分与改进建议"这一核心价值假设。通过 Flutter 跨平台框架 + Google ML Kit Pose Detection 本地推理 + 规则评分引擎，实现从视频录制到分析结果展示的完整闭环，为后续迭代奠定技术与产品基础。
 
 MVP 阶段聚焦最小可用功能集：单次挥棒录制、2D 姿态识别、3 个核心技术指标（速度/角度/协调性）、综合评分（0-100）、2 条以上可执行建议、最近 10 次本地历史记录。不追求完美精度，优先保证流程可用性与反馈可解释性。
 
@@ -34,7 +34,7 @@ MVP 阶段必须满足以下硬性 KPI 方可进入 V2：
 MVP 要验证：用户是否愿意用手机自主拍摄并接受 AI 分析结果作为训练参考。
 
 ### 为什么现在必须解决
-1. 移动端 AI 推理能力已成熟（MediaPipe 等开源方案可用）
+1. 移动端 AI 推理能力已成熟（Google ML Kit 等官方方案可用）
 2. 用户对"数据化训练"接受度提升
 3. 需要快速验证市场需求，避免过度投入
 
@@ -83,10 +83,11 @@ MVP 要验证：用户是否愿意用手机自主拍摄并接受 AI 分析结果
 - 支持录制后预览与重拍
 
 #### FR-2 姿态识别
-- 集成 MediaPipe Pose 进行 2D 关键点检测
-- 识别关键身体部位：头、肩、肘、腕、髋、膝、踝
+- 集成 Google ML Kit Pose Detection 进行 2D 关键点检测
+- 识别关键身体部位：头、肩、肘、腕、髋、膝、踝（33 个关键点）
 - 输出每帧关键点坐标序列
 - 处理遮挡与识别失败情况（提示用户重拍）
+- 技术实现：`google_mlkit_pose_detection` 插件，支持 33 个身体关键点
 
 #### FR-3 挥棒阶段分割
 - 自动识别挥棒动作阶段：
@@ -177,10 +178,10 @@ MVP 要验证：用户是否愿意用手机自主拍摄并接受 AI 分析结果
 - 同一动作重复测试评分波动 ≤ 10 分（标准差）
 
 #### NFR-4 兼容性
-- 支持 iOS 14+ / Android 9+（覆盖 95%+ 活跃设备）
+- 支持 iOS 15.5+ / Android 9+（覆盖 90%+ 活跃设备）
 - 适配主流屏幕尺寸（5-7 英寸）
 - 基准测试机型：iPhone 12 / Pixel 6 / 三星 Galaxy A53
-- MediaPipe 备选方案：若 Flutter 插件不可用，通过 Platform Channel 桥接原生 SDK
+- ML Kit 集成：使用 `google_mlkit_pose_detection` 插件（v0.12.0）
 
 #### NFR-5 隐私
 - 视频仅本地存储，不上传云端
@@ -231,9 +232,11 @@ MVP 阶段明确不包含：
 ## Dependencies
 
 ### 外部依赖
-1. MediaPipe Pose Flutter 插件（或原生桥接）
-2. SQLite Flutter 插件（sqflite）
-3. 摄像头权限与存储权限
+1. Google ML Kit Pose Detection (`google_mlkit_pose_detection: ^0.12.0`)
+2. Camera 插件 (`camera: ^0.11.4`)
+3. SQLite Flutter 插件 (`sqflite: ^2.3.0`)
+4. 摄像头权限与存储权限
+5. 路由管理 (`go_router: ^13.0.0`)
 
 ### 内部依赖
 1. Flutter 项目初始化与基础架构
@@ -248,9 +251,10 @@ MVP 阶段明确不包含：
 - 摄像头录制功能
 
 ### M2：姿态识别（3 周）
-- MediaPipe Pose 集成
-- 关键点提取与可视化验证
+- Google ML Kit Pose Detection 集成
+- 33 个关键点提取与坐标转换
 - 挥棒阶段分割算法
+- 实时姿态预览（可选）
 
 ### M3：评分引擎（2 周）
 - 核心指标计算
@@ -267,10 +271,70 @@ MVP 阶段明确不包含：
 - 性能优化
 - 用户测试与反馈迭代
 
+## 技术实现详情
+
+### 技术栈
+- **框架**: Flutter 3.41.4 / Dart 3.11.1
+- **姿态识别**: `google_mlkit_pose_detection: ^0.12.0`
+- **摄像头**: `camera: ^0.11.4`
+- **数据库**: `sqflite: ^2.3.0`
+- **路由**: `go_router: ^13.0.0`
+- **路径管理**: `path_provider: ^2.1.1`
+
+### 平台要求
+- **iOS**: 15.5+（Podfile 配置）
+- **Android**: SDK 21+（Android 9+）
+- **架构**: arm64, x86_64
+
+### 关键模块实现
+
+#### 1. 姿态检测 (`lib/analysis/`)
+- `pose_detector.dart` - 定义 33 个关键点枚举和数据模型
+- `pose_processor.dart` - ML Kit 集成与图像格式转换
+- `metrics_calculator.dart` - 核心指标计算（速度/角度/协调性）
+- `swing_phase_detector.dart` - 挥棒阶段分割算法
+
+#### 2. 视频采集 (`lib/capture/`)
+- `camera_preview.dart` - 摄像头预览组件
+- `video_recorder.dart` - 视频录制管理
+- `quality_gate.dart` - 采集质量前置门控
+- `realtime_pose_preview.dart` - 实时姿态叠加预览
+
+#### 3. 评分引擎 (`lib/scoring/`)
+- `scoring_engine.dart` - 综合评分计算
+- `problem_detector.dart` - 问题模式识别
+- `suggestion_generator.dart` - 改进建议生成
+
+#### 4. 数据存储 (`lib/storage/`)
+- `database.dart` - SQLite 数据库管理
+- `database_manager.dart` - 数据库操作封装
+
+### 图像处理流程
+1. 摄像头采集 `CameraImage` (YUV420/NV21 格式)
+2. 转换为 ML Kit `InputImage` 格式
+3. ML Kit Pose Detector 处理 → 33 个关键点
+4. 关键点序列 → 阶段分割 → 指标计算 → 评分
+
+### 测试覆盖
+- **单元测试**: 118 个测试用例
+- **核心模块覆盖率**: analysis/ 模块已覆盖
+- **测试文件**:
+  - `test/analysis/pose_processor_test.dart` - 关键点模型测试
+  - `test/analysis/metrics_calculator_test.dart` - 指标计算测试
+  - `test/analysis/swing_phase_detector_test.dart` - 阶段分割测试
+  - `test/scoring/scoring_engine_test.dart` - 评分引擎测试
+  - `test/e2e/analysis_flow_test.dart` - 端到端流程测试
+
+### 已知限制
+1. 单目视觉无法获取真实深度，速度和距离为估算值
+2. ML Kit 仅支持单人姿态检测
+3. iOS 模拟器不支持摄像头，需使用真机测试
+4. Android 需安装 Java Runtime 进行构建
+
 ## Risks & Mitigation
 
 ### 主要风险
-1. **MediaPipe 识别精度不足** → 先用固定角度拍摄降低难度；备选方案：通过 Platform Channel 桥接原生 SDK
+1. **ML Kit 识别精度不足** → 先用固定角度拍摄降低难度；使用 Accurate 模型提升精度（设备性能允许时）
 2. **评分结果不可信** → 建立"可解释性"优先于"精度"；所有指标标注"参考值"
 3. **用户不理解如何拍摄** → 强化录制引导与示例视频；前置质量门控拦截低质量视频
 4. **机型差异导致性能波动** → 建立基准测试机型矩阵（高/中/低端各 2 款），P95 指标覆盖中端机型
@@ -291,7 +355,7 @@ MVP 阶段明确不包含：
 | 阶段分割失败 | 尝试 3 阶段简化分割 | "动作识别不完整，评分仅供参考" |
 | 分析超时（>20秒） | 终止分析，释放资源 | "分析超时，请关闭其他应用后重试" |
 | 存储空间不足 | 阻止录制，提示清理 | "存储空间不足，请清理后重试" |
-| MediaPipe 加载失败 | 提示重启应用 | "分析引擎加载失败，请重启应用" |
+| ML Kit 加载失败 | 提示重启应用 | "分析引擎加载失败，请重启应用" |
 
 ## Open Questions
 
