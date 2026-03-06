@@ -99,12 +99,19 @@ ui/          # 用户界面
 
 ## Key Rules
 
-项目遵循 `.claude/rules/` 中定义的标准：
+项目规则汇总于 [`.claude/CLAUDE.md`](.claude/CLAUDE.md)，包含以下核心规范：
+
 - `datetime.md`: 时间戳格式规范
 - `frontmatter-operations.md`: 文档元数据操作
 - `github-operations.md`: GitHub 集成规范
 - `standard-patterns.md`: 通用开发模式
 - `agent-coordination.md`: 多 Agent 协作规则
+- `path-standards.md`: 路径规范（隐私保护）
+- `strip-frontmatter.md`: 去除 Frontmatter
+- `test-execution.md`: 测试执行规范
+- `branch-operations.md`: 分支操作
+- `worktree-operations.md`: Worktree 操作
+- `use-ast-grep.md`: AST-Grep 集成协议
 
 ## Current Focus
 
