@@ -21,7 +21,13 @@ final GoRouter router = GoRouter(
         final extra = state.extra as Map<String, dynamic>?;
         return ResultPage(
           score: extra?['score'] as int? ?? 0,
-          feedback: extra?['feedback'] as String? ?? '',
+          velocity: extra?['velocity'] as double? ?? 0.0,
+          angle: extra?['angle'] as double? ?? 0.0,
+          coordination: extra?['coordination'] as double? ?? 0.0,
+          suggestions: (extra?['suggestions'] as List<dynamic>?)
+                  ?.map((e) => e.toString())
+                  .toList() ??
+              <String>[],
         );
       },
     ),

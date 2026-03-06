@@ -1,15 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../storage/storage.dart';
 
 /// 历史记录页面
-class HistoryPage extends StatelessWidget {
+class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // 模拟历史数据
-    final historyList = _generateMockHistory();
+  State<HistoryPage> createState() => _HistoryPageState();
+}
 
+class _HistoryPageState extends State<HistoryPage> {
+  final DatabaseManager _dbManager = DatabaseManager();
+  List<AnalysisRecord> _records = [];
+  bool _isLoading = true;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRecords();
+  }
+
+  Future<void> _loadRecords() async {
+    try {
+      setState(() {
+        _isLoading = true;
+        _error = null;
+      });
+
+      // 确保数据库已初始化
+      if (!_dbManager.isInitialized) {
+        await _dbManager.initDatabase();
+      }
+
+      // 获取最近 10 条记录
+      final records = await _dbManager.getRecentRecords(limit: 10);
+
+      setState(() {
+        _records = records;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _dbManager.closeDatabase();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('历史记录'),
@@ -17,11 +64,63 @@ class HistoryPage extends StatelessWidget {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.go('/'),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _loadRecords,
+          ),
+        ],
       ),
-      body: historyList.isEmpty
-          ? _buildEmptyState(context)
-          : _buildHistoryList(context, historyList),
+      body: _buildBody(),
     );
+  }
+
+  Widget _buildBody() {
+    if (_isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    if (_error != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 64,
+              color: Colors.red.shade300,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              '加载失败',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              _error!,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.grey.shade600,
+                  ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: _loadRecords,
+              icon: const Icon(Icons.refresh),
+              label: const Text('重试'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (_records.isEmpty) {
+      return _buildEmptyState(context);
+    }
+
+    return _buildHistoryList(context, _records);
   }
 
   /// 构建空状态
@@ -59,29 +158,32 @@ class HistoryPage extends StatelessWidget {
   }
 
   /// 构建历史列表
-  Widget _buildHistoryList(BuildContext context, List<HistoryItem> historyList) {
+  Widget _buildHistoryList(BuildContext context, List<AnalysisRecord> records) {
     return ListView.builder(
       padding: const EdgeInsets.all(16),
-      itemCount: historyList.length,
+      itemCount: records.length,
       itemBuilder: (context, index) {
-        final item = historyList[index];
-        return _buildHistoryCard(context, item);
+        final record = records[index];
+        return _buildHistoryCard(context, record);
       },
     );
   }
 
   /// 构建历史卡片
-  Widget _buildHistoryCard(BuildContext context, HistoryItem item) {
-    final scoreColor = _getScoreColor(item.score);
+  Widget _buildHistoryCard(BuildContext context, AnalysisRecord record) {
+    final scoreColor = _getScoreColor(record.score);
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: InkWell(
         onTap: () {
-          // 跳转到结果页
+          // 跳转到结果页，传递完整数据
           context.push('/result', extra: {
-            'score': item.score,
-            'feedback': item.feedback,
+            'score': record.score,
+            'velocity': record.velocity,
+            'angle': record.angle,
+            'coordination': record.coordination,
+            'suggestions': record.suggestions,
           });
         },
         borderRadius: BorderRadius.circular(12),
@@ -103,7 +205,7 @@ class HistoryPage extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    '${item.score}',
+                    '${record.score}',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -119,14 +221,39 @@ class HistoryPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      item.date,
+                      record.formattedDate,
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const SizedBox(height: 4),
+                    // 简要指标
+                    Row(
+                      children: [
+                        _buildMiniMetric(
+                          context,
+                          '速度',
+                          '${record.velocity.toStringAsFixed(1)} m/s',
+                        ),
+                        const SizedBox(width: 12),
+                        _buildMiniMetric(
+                          context,
+                          '角度',
+                          '${record.angle.toStringAsFixed(0)}°',
+                        ),
+                        const SizedBox(width: 12),
+                        _buildMiniMetric(
+                          context,
+                          '协调性',
+                          _getCoordinationText(record.coordination),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
                     Text(
-                      item.feedback,
-                      style: Theme.of(context).textTheme.bodySmall,
-                      maxLines: 2,
+                      record.briefFeedback,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Colors.grey.shade600,
+                          ),
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
@@ -144,6 +271,28 @@ class HistoryPage extends StatelessWidget {
     );
   }
 
+  /// 构建小指标显示
+  Widget _buildMiniMetric(BuildContext context, String label, String value) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          '$label:',
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Colors.grey.shade500,
+              ),
+        ),
+        const SizedBox(width: 2),
+        Text(
+          value,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                fontWeight: FontWeight.w500,
+              ),
+        ),
+      ],
+    );
+  }
+
   /// 获取分数颜色
   Color _getScoreColor(int score) {
     if (score >= 90) return const Color(0xFF4CAF50);
@@ -153,42 +302,11 @@ class HistoryPage extends StatelessWidget {
     return const Color(0xFFF44336);
   }
 
-  /// 生成模拟历史数据
-  List<HistoryItem> _generateMockHistory() {
-    return [
-      HistoryItem(
-        id: '1',
-        date: '2024-01-15 14:30',
-        score: 85,
-        feedback: '挥棒动作流畅，击球力度适中。建议保持挥杆速度一致性。',
-      ),
-      HistoryItem(
-        id: '2',
-        date: '2024-01-14 10:20',
-        score: 78,
-        feedback: '整体表现良好，但挥棒角度略有偏差。注意保持身体平衡。',
-      ),
-      HistoryItem(
-        id: '3',
-        date: '2024-01-13 16:45',
-        score: 92,
-        feedback: '出色的挥棒动作！力量和控制力都达到了较高水平。',
-      ),
-    ];
+  /// 获取协调性文字
+  String _getCoordinationText(double coordination) {
+    if (coordination >= 80) return '优秀';
+    if (coordination >= 60) return '良好';
+    if (coordination >= 40) return '一般';
+    return '需改进';
   }
-}
-
-/// 历史记录数据模型
-class HistoryItem {
-  final String id;
-  final String date;
-  final int score;
-  final String feedback;
-
-  HistoryItem({
-    required this.id,
-    required this.date,
-    required this.score,
-    required this.feedback,
-  });
 }
