@@ -212,8 +212,8 @@ class AsyncProcessor {
     final stopwatch = Stopwatch()..start();
 
     try {
-      // 使用 compute 在隔离区执行
-      final result = await compute(_runTask<T>, task);
+      // 使用 Isolate.run 在隔离区执行 (支持闭包)
+      final result = await Isolate.run(() => task());
 
       stopwatch.stop();
 
@@ -232,11 +232,6 @@ class AsyncProcessor {
     }
   }
 
-  /// 在隔离区执行任务 (用于 compute)
-  static T _runTask<T>(T Function() task) {
-    return task();
-  }
-
   /// 带超时的异步处理
   Future<AsyncResult<T>> processWithTimeout<T>(
     T Function() task, {
@@ -246,7 +241,8 @@ class AsyncProcessor {
     final stopwatch = Stopwatch()..start();
 
     try {
-      final result = await compute(_runTask<T>, task)
+      // 使用 Isolate.run 在隔离区执行 (支持闭包)
+      final result = await Isolate.run(() => task())
           .timeout(timeout, onTimeout: () {
         throw TimeoutException('Task timeout: $taskName');
       });
