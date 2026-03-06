@@ -367,7 +367,7 @@ class ResultPage extends StatelessWidget {
   /// 获取角度颜色
   Color _getAngleColor(double angle) {
     if (angle >= 30 && angle <= 60) return const Color(0xFF4CAF50);
-    if (angle >= 20 || angle <= 70) return const Color(0xFFFFC107);
+    if (angle >= 20 && angle <= 70) return const Color(0xFFFFC107);
     return const Color(0xFFF44336);
   }
 

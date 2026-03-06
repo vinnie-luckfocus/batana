@@ -24,11 +24,6 @@ class _HistoryPageState extends State<HistoryPage> {
 
   Future<void> _loadRecords() async {
     try {
-      setState(() {
-        _isLoading = true;
-        _error = null;
-      });
-
       // 确保数据库已初始化
       if (!_dbManager.isInitialized) {
         await _dbManager.initDatabase();
@@ -37,11 +32,15 @@ class _HistoryPageState extends State<HistoryPage> {
       // 获取最近 10 条记录
       final records = await _dbManager.getRecentRecords(limit: 10);
 
+      if (!mounted) return;
+
       setState(() {
         _records = records;
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
+
       setState(() {
         _error = e.toString();
         _isLoading = false;

@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:camera/camera.dart';
 import '../../capture/camera_preview.dart';
 import '../../capture/video_recorder.dart';
 import '../../capture/quality_gate.dart';
+import '../../storage/storage.dart';
 import '../widgets/recording_guide_overlay.dart';
 
 /// 录制页面 - 应用首页
@@ -24,6 +26,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   // 质量门控
   final QualityGate _qualityGate = QualityGate();
+
+  // 数据库管理器
+  final DatabaseManager _dbManager = DatabaseManager();
 
   // 引导控制器
   final RecordingGuideController _guideController = RecordingGuideController();
@@ -257,14 +262,39 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     );
 
     // 模拟分析完成
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
-        Navigator.of(context).pop(); // 关闭对话框
-        context.pushReplacement('/result', extra: {
-          'score': 85,
-          'feedback': '挥棒动作流畅，击球力度适中。建议保持挥杆速度一致性。',
-        });
+    Future.delayed(const Duration(seconds: 2), () async {
+      if (!mounted) return;
+
+      // 创建分析记录
+      final record = AnalysisRecord(
+        createdAt: DateTime.now(),
+        score: 85,
+        velocity: 18.5,
+        angle: 45.0,
+        coordination: 82.0,
+        suggestions: ['保持挥杆速度一致性', '注意转体发力'],
+      );
+
+      // 保存到数据库
+      try {
+        await _dbManager.initDatabase();
+        await _dbManager.saveRecord(record);
+      } catch (e) {
+        // 保存失败不影响结果展示
+        debugPrint('保存记录失败: $e');
       }
+
+      if (!mounted) return;
+
+      Navigator.of(context).pop(); // 关闭对话框
+      context.pushReplacement('/result', extra: {
+        'score': 85,
+        'velocity': 18.5,
+        'angle': 45.0,
+        'coordination': 82.0,
+        'suggestions': ['保持挥杆速度一致性', '注意转体发力'],
+        'feedback': '挥棒动作流畅，击球力度适中。建议保持挥杆速度一致性。',
+      });
     });
   }
 

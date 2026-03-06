@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:isolate';
 import 'pose_detector.dart';
 
 /// 帧采样器配置
@@ -181,8 +182,8 @@ class AsyncResult<T> {
     this.error,
   });
 
-  /// 数据
-  final T data;
+  /// 数据 (可能为空)
+  final T? data;
 
   /// 处理时长 (毫秒)
   final int durationMs;
@@ -212,7 +213,7 @@ class AsyncProcessor {
 
     try {
       // 使用 compute 在隔离区执行
-      final result = await Future<T>.task(() => task());
+      final result = await compute(_runTask<T>, task);
 
       stopwatch.stop();
 
@@ -224,11 +225,16 @@ class AsyncProcessor {
       stopwatch.stop();
 
       return AsyncResult(
-        data: null as T,
+        data: null,
         durationMs: stopwatch.elapsedMilliseconds,
         error: e.toString(),
       );
     }
+  }
+
+  /// 在隔离区执行任务 (用于 compute)
+  static T _runTask<T>(T Function() task) {
+    return task();
   }
 
   /// 带超时的异步处理
@@ -240,7 +246,7 @@ class AsyncProcessor {
     final stopwatch = Stopwatch()..start();
 
     try {
-      final result = await Future<T>.task(() => task())
+      final result = await compute(_runTask<T>, task)
           .timeout(timeout, onTimeout: () {
         throw TimeoutException('Task timeout: $taskName');
       });
@@ -255,7 +261,7 @@ class AsyncProcessor {
       stopwatch.stop();
 
       return AsyncResult(
-        data: null as T,
+        data: null,
         durationMs: stopwatch.elapsedMilliseconds,
         error: e.toString(),
       );
@@ -282,21 +288,24 @@ class PerformanceMonitor {
   int get p50 {
     if (_durations.isEmpty) return 0;
     final sorted = List<int>.from(_durations)..sort();
-    return sorted[(sorted.length * 0.5).round()];
+    final index = ((sorted.length - 1) * 0.5).round();
+    return sorted[index];
   }
 
   /// 获取 P95
   int get p95 {
     if (_durations.isEmpty) return 0;
     final sorted = List<int>.from(_durations)..sort();
-    return sorted[(sorted.length * 0.95).round()];
+    final index = ((sorted.length - 1) * 0.95).round();
+    return sorted[index];
   }
 
   /// 获取 P99
   int get p99 {
     if (_durations.isEmpty) return 0;
     final sorted = List<int>.from(_durations)..sort();
-    return sorted[(sorted.length * 0.99).round()];
+    final index = ((sorted.length - 1) * 0.99).round();
+    return sorted[index];
   }
 
   /// 获取平均时长
