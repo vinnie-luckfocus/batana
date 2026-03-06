@@ -7,3 +7,4 @@ library analysis;
 export 'pose_detector.dart';
 export 'pose_processor.dart';
 export 'swing_phase_detector.dart';
+export 'metrics_calculator.dart';
