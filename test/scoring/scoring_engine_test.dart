@@ -385,7 +385,7 @@ void main() {
         velocity: 20.0,
         velocityLevel: '中',
         maxAngle: 45.0,
-        hipShoulderDelay: 50.0,
+        hipShoulderDelay: -50.0, // 过早开肩 + 低流畅度 = 协调性差
         transferSmoothness: 0.2, // 低于默认值 0.5
       );
 
