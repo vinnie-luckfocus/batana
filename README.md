@@ -19,7 +19,7 @@ If you have any questions or feedback, feel free to reach out!
 <br />
 <div align="center">
   <a href="https://github.com/vinnie-luckfocus/batana">
-    <img src="https://placehold.co/200x200/1E88E5/FFFFFF?text=⚾" alt="Logo" width="200" height="200">
+    <img src="assets/logo.png" alt="Logo" width="200" height="200">
   </a>
 
   <h3 align="center">Batana</h3>
