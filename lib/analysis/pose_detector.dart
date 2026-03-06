@@ -16,6 +16,8 @@ enum PoseLandmark {
   rightEyeOuter(6, '右眼外', 'right_eye_outer'),
   leftEar(7, '左耳', 'left_ear'),
   rightEar(8, '右耳', 'right_ear'),
+  leftMouth(9, '左嘴角', 'left_mouth'),
+  rightMouth(10, '右嘴角', 'right_mouth'),
 
   // 肩部和手臂关键点 (11-22)
   leftShoulder(11, '左肩', 'left_shoulder'),
@@ -47,10 +49,10 @@ enum PoseLandmark {
   leftFootIndex(31, '左脚趾', 'left_foot_index'),
   rightFootIndex(32, '右脚趾', 'right_foot_index');
 
-  const PoseLandmark(this.index, this.chineseName, this.englishName);
+  const PoseLandmark(this.landmarkIndex, this.chineseName, this.englishName);
 
   /// 关键点索引
-  final int index;
+  final int landmarkIndex;
 
   /// 中文名称
   final String chineseName;
@@ -61,7 +63,7 @@ enum PoseLandmark {
   /// 根据索引获取关键点
   static PoseLandmark? fromIndex(int index) {
     for (final landmark in PoseLandmark.values) {
-      if (landmark.index == index) return landmark;
+      if (landmark.landmarkIndex == index) return landmark;
     }
     return null;
   }

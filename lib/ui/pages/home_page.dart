@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:camera/camera.dart';
+import 'package:camera/camera.dart' as camera_lib;
 import '../../capture/camera_preview.dart';
 import '../../capture/video_recorder.dart';
 import '../../capture/quality_gate.dart';
@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         await _videoRecorder.initialize(_cameraManager.controller!);
 
         // 设置质量门控的摄像头参数
-        final cameras = await availableCameras();
+        final cameras = await camera_lib.availableCameras();
         if (cameras.isNotEmpty) {
           _qualityGate.setCamera(cameras.first);
         }
@@ -107,7 +107,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   /// 获取可用摄像头列表
-  List<CameraDescription> get _cameras => [];
+  List<camera_lib.CameraDescription> get _cameras => [];
 
   /// 开始质量检测
   void _startQualityCheck() {

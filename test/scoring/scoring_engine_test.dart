@@ -310,7 +310,10 @@ void main() {
       final suggestions = generator.generateSuggestions(metrics, []);
 
       expect(suggestions, isNotEmpty);
-      expect(suggestions.first, contains('优秀') || contains('保持'));
+      expect(
+        suggestions.first.contains('优秀') || suggestions.first.contains('保持'),
+        isTrue,
+      );
     });
   });
 

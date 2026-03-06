@@ -443,7 +443,7 @@ class SwingMetricsCalculator {
 
     // 返回时序差 (毫秒)
     // 正值表示髋部先启动
-    return shoulderStartTime - hipStartTime;
+    return (shoulderStartTime - hipStartTime).toDouble();
   }
 
   /// 获取转动变化量

@@ -1,6 +1,6 @@
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
-import '../analysis/pose_detector.dart';
+import '../../analysis/pose_detector.dart';
 
 /// 姿态可视化Painter
 ///

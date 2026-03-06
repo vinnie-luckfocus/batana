@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:camera/camera.dart' as camera;
+import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart' as mlkit;
 import '../analysis/pose_detector.dart';
 import '../analysis/pose_processor.dart';
 import 'camera_preview.dart';
@@ -78,11 +80,11 @@ class _RealtimePoseCameraPreviewState extends State<RealtimePoseCameraPreview> {
       _isProcessingFrame = true;
 
       try {
-        // 将相机图像转换为字节数据
-        final imageBytes = _convertCameraImageToBytes(cameraImage);
-        if (imageBytes != null) {
+        // 将 CameraImage 转换为 ML Kit InputImage
+        final inputImage = _convertCameraImageToInputImage(cameraImage);
+        if (inputImage != null) {
           // 处理图像并检测姿态
-          final result = await _poseDetector.processImage(imageBytes);
+          final result = await _poseDetector.processImage(inputImage);
 
           if (result.isSuccess && result.poseData != null) {
             setState(() {
@@ -101,23 +103,71 @@ class _RealtimePoseCameraPreviewState extends State<RealtimePoseCameraPreview> {
     });
   }
 
-  /// 将 CameraImage 转换为字节数据
-  Uint8List? _convertCameraImageToBytes(camera.CameraImage cameraImage) {
+  /// 将 CameraImage 转换为 ML Kit InputImage
+  mlkit.InputImage? _convertCameraImageToInputImage(camera.CameraImage cameraImage) {
     try {
-      // 根据图像格式进行转换
-      if (cameraImage.format.group == camera.ImageFormatGroup.jpeg) {
-        return cameraImage.planes[0].bytes;
-      } else if (cameraImage.format.group == camera.ImageFormatGroup.yuv420) {
-        // YUV420 格式需要转换为 RGB
-        // 这里简化处理，实际可能需要使用 image 包
-        return cameraImage.planes[0].bytes;
-      }
+      final controller = widget.cameraManager.controller!;
+      final cameraDescription = controller.description;
 
-      return null;
+      // 获取图像旋转角度
+      final rotation = _getImageRotation(cameraDescription.sensorOrientation);
+
+      // 创建 InputImageMetadata
+      final inputImageMetadata = mlkit.InputImageMetadata(
+        size: Size(cameraImage.width.toDouble(), cameraImage.height.toDouble()),
+        rotation: rotation,
+        format: _getInputImageFormat(cameraImage.format.group),
+        bytesPerRow: cameraImage.planes.first.bytesPerRow,
+      );
+
+      // 合并所有平面的字节数据
+      final bytes = _mergePlanes(cameraImage.planes);
+
+      return mlkit.InputImage.fromBytes(
+        bytes: bytes,
+        metadata: inputImageMetadata,
+      );
     } catch (e) {
       debugPrint('转换相机图像失败: $e');
       return null;
     }
+  }
+
+  /// 获取图像旋转角度
+  mlkit.InputImageRotation _getImageRotation(int sensorOrientation) {
+    switch (sensorOrientation) {
+      case 0:
+        return mlkit.InputImageRotation.rotation0deg;
+      case 90:
+        return mlkit.InputImageRotation.rotation90deg;
+      case 180:
+        return mlkit.InputImageRotation.rotation180deg;
+      case 270:
+        return mlkit.InputImageRotation.rotation270deg;
+      default:
+        return mlkit.InputImageRotation.rotation0deg;
+    }
+  }
+
+  /// 获取输入图像格式
+  mlkit.InputImageFormat _getInputImageFormat(camera.ImageFormatGroup format) {
+    switch (format) {
+      case camera.ImageFormatGroup.yuv420:
+        return mlkit.InputImageFormat.yuv420;
+      case camera.ImageFormatGroup.bgra8888:
+        return mlkit.InputImageFormat.bgra8888;
+      default:
+        return mlkit.InputImageFormat.nv21;
+    }
+  }
+
+  /// 合并图像平面数据
+  Uint8List _mergePlanes(List<camera.Plane> planes) {
+    final WriteBuffer allBytes = WriteBuffer();
+    for (final plane in planes) {
+      allBytes.putUint8List(plane.bytes);
+    }
+    return allBytes.done().buffer.asUint8List();
   }
 
   /// 切换摄像头

@@ -2,17 +2,17 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:camera/camera.dart';
-import 'package:mediapipe_pose/mediapipe_pose.dart';
+import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart' as mlkit;
 import 'pose_detector.dart';
 
 /// 姿态检测器
 ///
-/// 使用 MediaPipe Pose 进行实时姿态检测
+/// 使用 Google ML Kit Pose Detection 进行实时姿态检测
 class PoseDetector {
   PoseDetector({PoseDetectorConfig? config}) : _config = config ?? const PoseDetectorConfig();
 
   final PoseDetectorConfig _config;
-  Pose? _pose;
+  mlkit.PoseDetector? _poseDetector;
   bool _isInitialized = false;
   int _frameCount = 0;
 
@@ -30,16 +30,15 @@ class PoseDetector {
     if (_isInitialized) return;
 
     try {
-      _pose = Pose(
-        poseDetectorOptions: PoseDetectorOptions(
-          modelComplexity: _config.modelComplexity,
-          smoothLandmarks: _config.smoothLandmarks,
-          enableSegmentation: _config.enableSegmentation,
-          smoothSegmentation: _config.smoothSegmentation,
-          minDetectionConfidence: _config.minDetectionConfidence,
-          minTrackingConfidence: _config.minTrackingConfidence,
-        ),
+      // 配置 ML Kit Pose Detector 选项
+      final options = mlkit.PoseDetectorOptions(
+        mode: mlkit.PoseDetectionMode.stream,
+        model: _config.modelComplexity == 2
+            ? mlkit.PoseDetectionModel.accurate
+            : mlkit.PoseDetectionModel.base,
       );
+
+      _poseDetector = mlkit.PoseDetector(options: options);
 
       _isInitialized = true;
     } catch (e) {
@@ -51,8 +50,8 @@ class PoseDetector {
   /// 处理图像并检测姿态
   ///
   /// 返回检测到的姿态数据
-  Future<PoseDetectionResult> processImage(Uint8List imageBytes) async {
-    if (!_isInitialized || _pose == null) {
+  Future<PoseDetectionResult> processImage(mlkit.InputImage inputImage) async {
+    if (!_isInitialized || _poseDetector == null) {
       return const PoseDetectionResult(
         error: '姿态检测器未初始化',
       );
@@ -68,18 +67,22 @@ class PoseDetector {
         );
       }
 
-      // 使用 MediaPipe 处理图像
-      final result = await _pose!.processImage(imageBytes);
+      // 使用 ML Kit 处理图像
+      final poses = await _poseDetector!.processImage(inputImage);
 
       // 检查是否检测到姿态
-      if (result.poseLandmarks == null || result.poseLandmarks!.isEmpty) {
+      if (poses.isEmpty) {
         return const PoseDetectionResult(
           poseData: null,
         );
       }
 
-      // 转换 MediaPipe 关键点到应用数据模型
-      final poseData = _convertLandmarks(result.poseLandmarks!, result.timestamp ?? 0);
+      // 取第一个检测到的姿态
+      final pose = poses.first;
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+
+      // 转换 ML Kit 关键点到应用数据模型
+      final poseData = _convertLandmarks(pose.landmarks, timestamp);
 
       // 存储当前帧数据供下一帧使用
       _previousPoseData = poseData;
@@ -90,67 +93,13 @@ class PoseDetector {
     }
   }
 
-  /// 处理相机图像 (CameraImage)
-  Future<PoseDetectionResult> processCameraImage(dynamic cameraImage) async {
-    try {
-      // 将 CameraImage 转换为 MediaPipe 输入格式
-      final imageBytes = _convertCameraImageToBytes(cameraImage);
-      if (imageBytes == null) {
-        return const PoseDetectionResult(
-          error: '无法转换相机图像',
-        );
-      }
-
-      return await processImage(imageBytes);
-    } catch (e) {
-      return PoseDetectionResult(error: '处理相机图像失败: $e');
-    }
-  }
-
-  /// 将 CameraImage 转换为字节数据
-  Uint8List? _convertCameraImageToBytes(dynamic cameraImage) {
-    try {
-      // 假设 cameraImage 是 camera 包中的 CameraImage
-      // 需要根据实际相机图像格式进行转换
-
-      if (cameraImage.format.group == ImageFormatGroup.yuv420) {
-        // YUV420 格式转换
-        return _convertYuv420ToRgb(cameraImage);
-      } else if (cameraImage.format.group == ImageFormatGroup.jpeg) {
-        // JPEG 格式直接使用
-        return cameraImage.planes[0].bytes;
-      }
-
-      return null;
-    } catch (e) {
-      debugPrint('转换相机图像失败: $e');
-      return null;
-    }
-  }
-
-  /// YUV420 转 RGB (简化版)
-  Uint8List? _convertYuv420ToRgb(dynamic cameraImage) {
-    try {
-      // 这里需要根据实际的 CameraImage 实现进行转换
-      // 简化处理: 实际项目中需要使用 image 包进行转换
-
-      // 返回原始数据作为占位符
-      // 实际实现需要将 YUV 转换为 RGB 字节
-      return cameraImage.planes[0].bytes;
-    } catch (e) {
-      debugPrint('YUV420 转换失败: $e');
-      return null;
-    }
-  }
-
-  /// 转换 MediaPipe 关键点到应用数据模型
-  PoseData _convertLandmarks(List<NormalizedLandmark> landmarks, int timestamp) {
+  /// 转换 ML Kit 关键点到应用数据模型
+  PoseData _convertLandmarks(Map<mlkit.PoseLandmarkType, mlkit.PoseLandmark> landmarks, int timestamp) {
     final List<PoseLandmarkPoint> landmarkPoints = [];
     final List<PoseLandmarkPoint> worldLandmarkPoints = [];
 
-    for (int i = 0; i < landmarks.length; i++) {
-      final landmark = landmarks[i];
-      final poseLandmark = PoseLandmark.fromIndex(i);
+    landmarks.forEach((type, landmark) {
+      final poseLandmark = _convertLandmarkType(type);
 
       if (poseLandmark != null) {
         landmarkPoints.add(
@@ -158,15 +107,12 @@ class PoseDetector {
             x: landmark.x,
             y: landmark.y,
             z: landmark.z,
-            visibility: landmark.visibility ?? 0.0,
+            visibility: landmark.likelihood,
             landmark: poseLandmark,
           ),
         );
       }
-    }
-
-    // 如果有世界坐标数据也进行转换
-    // 注意: worldLandmarks 需要单独请求
+    });
 
     return PoseData(
       landmarks: landmarkPoints,
@@ -175,11 +121,85 @@ class PoseDetector {
     );
   }
 
+  /// 将 ML Kit 关键点类型转换为应用内类型
+  PoseLandmark? _convertLandmarkType(mlkit.PoseLandmarkType type) {
+    switch (type) {
+      case mlkit.PoseLandmarkType.nose:
+        return PoseLandmark.nose;
+      case mlkit.PoseLandmarkType.leftEyeInner:
+        return PoseLandmark.leftEyeInner;
+      case mlkit.PoseLandmarkType.leftEye:
+        return PoseLandmark.leftEye;
+      case mlkit.PoseLandmarkType.leftEyeOuter:
+        return PoseLandmark.leftEyeOuter;
+      case mlkit.PoseLandmarkType.rightEyeInner:
+        return PoseLandmark.rightEyeInner;
+      case mlkit.PoseLandmarkType.rightEye:
+        return PoseLandmark.rightEye;
+      case mlkit.PoseLandmarkType.rightEyeOuter:
+        return PoseLandmark.rightEyeOuter;
+      case mlkit.PoseLandmarkType.leftEar:
+        return PoseLandmark.leftEar;
+      case mlkit.PoseLandmarkType.rightEar:
+        return PoseLandmark.rightEar;
+      case mlkit.PoseLandmarkType.leftMouth:
+        return PoseLandmark.leftMouth;
+      case mlkit.PoseLandmarkType.rightMouth:
+        return PoseLandmark.rightMouth;
+      case mlkit.PoseLandmarkType.leftShoulder:
+        return PoseLandmark.leftShoulder;
+      case mlkit.PoseLandmarkType.rightShoulder:
+        return PoseLandmark.rightShoulder;
+      case mlkit.PoseLandmarkType.leftElbow:
+        return PoseLandmark.leftElbow;
+      case mlkit.PoseLandmarkType.rightElbow:
+        return PoseLandmark.rightElbow;
+      case mlkit.PoseLandmarkType.leftWrist:
+        return PoseLandmark.leftWrist;
+      case mlkit.PoseLandmarkType.rightWrist:
+        return PoseLandmark.rightWrist;
+      case mlkit.PoseLandmarkType.leftPinky:
+        return PoseLandmark.leftPinky;
+      case mlkit.PoseLandmarkType.rightPinky:
+        return PoseLandmark.rightPinky;
+      case mlkit.PoseLandmarkType.leftIndex:
+        return PoseLandmark.leftIndex;
+      case mlkit.PoseLandmarkType.rightIndex:
+        return PoseLandmark.rightIndex;
+      case mlkit.PoseLandmarkType.leftThumb:
+        return PoseLandmark.leftThumb;
+      case mlkit.PoseLandmarkType.rightThumb:
+        return PoseLandmark.rightThumb;
+      case mlkit.PoseLandmarkType.leftHip:
+        return PoseLandmark.leftHip;
+      case mlkit.PoseLandmarkType.rightHip:
+        return PoseLandmark.rightHip;
+      case mlkit.PoseLandmarkType.leftKnee:
+        return PoseLandmark.leftKnee;
+      case mlkit.PoseLandmarkType.rightKnee:
+        return PoseLandmark.rightKnee;
+      case mlkit.PoseLandmarkType.leftAnkle:
+        return PoseLandmark.leftAnkle;
+      case mlkit.PoseLandmarkType.rightAnkle:
+        return PoseLandmark.rightAnkle;
+      case mlkit.PoseLandmarkType.leftHeel:
+        return PoseLandmark.leftHeel;
+      case mlkit.PoseLandmarkType.rightHeel:
+        return PoseLandmark.rightHeel;
+      case mlkit.PoseLandmarkType.leftFootIndex:
+        return PoseLandmark.leftFootIndex;
+      case mlkit.PoseLandmarkType.rightFootIndex:
+        return PoseLandmark.rightFootIndex;
+      default:
+        return null;
+    }
+  }
+
   /// 释放资源
   Future<void> dispose() async {
-    if (_pose != null) {
-      _pose!.close();
-      _pose = null;
+    if (_poseDetector != null) {
+      await _poseDetector!.close();
+      _poseDetector = null;
     }
     _isInitialized = false;
     _previousPoseData = null;
@@ -205,7 +225,7 @@ class RealtimePoseProcessor {
   final void Function(String)? onError;
 
   bool _isRunning = false;
-  StreamSubscription? _imageStreamSubscription;
+  StreamSubscription<mlkit.InputImage>? _imageStreamSubscription;
 
   /// 是否正在运行
   bool get isRunning => _isRunning;
@@ -216,7 +236,7 @@ class RealtimePoseProcessor {
   }
 
   /// 开始处理图像流
-  Future<void> startProcessing(Stream<Uint8List> imageStream) async {
+  Future<void> startProcessing(Stream<mlkit.InputImage> imageStream) async {
     if (_isRunning) return;
 
     _isRunning = true;
@@ -224,9 +244,9 @@ class RealtimePoseProcessor {
     await _detector.initialize();
 
     _imageStreamSubscription = imageStream.listen(
-      (imageBytes) async {
+      (inputImage) async {
         try {
-          final result = await _detector.processImage(imageBytes);
+          final result = await _detector.processImage(inputImage);
           if (result.isSuccess && result.poseData != null) {
             onPoseDetected?.call(result.poseData!);
           } else if (result.error != null) {

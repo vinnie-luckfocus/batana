@@ -156,7 +156,7 @@ class CameraManager {
 
       // 默认使用后置摄像头
       _currentCameraIndex = _cameras.indexWhere(
-        (camera) => camera.lensDirection == camera.CameraLensDirection.back,
+        (c) => c.lensDirection == camera.CameraLensDirection.back,
       );
       if (_currentCameraIndex < 0) _currentCameraIndex = 0;
 
