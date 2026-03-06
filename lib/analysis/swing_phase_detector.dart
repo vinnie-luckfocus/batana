@@ -383,8 +383,8 @@ class SwingPhaseDetector {
     final prepareEnd = _findPrepareEnd(velocities, peakIndex);
     boundaries.add(prepareEnd);
 
-    // 边界2: 加速期结束 (速度峰值点 - 1)
-    boundaries.add(peakIndex - 1);
+    // 边界2: 加速期结束 (速度峰值点)
+    boundaries.add(peakIndex);
 
     // 边界3: 击球期结束 (速度开始快速下降的点)
     final strikeEnd = _findStrikeEnd(velocities, peakIndex);

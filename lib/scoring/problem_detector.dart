@@ -129,6 +129,9 @@ class ProblemDetectorConfig {
 
     /// 髋肩时序差阈值 (毫秒)
     this.hipShoulderDelayThreshold = 0.0,
+
+    /// 重心转移流畅度阈值
+    this.weightShiftThreshold = 0.5,
   });
 
   /// 最小挥棒速度 (m/s)
@@ -146,6 +149,10 @@ class ProblemDetectorConfig {
   /// 髋肩时序差阈值 (毫秒)
   /// 小于等于此值认为是过早开肩
   final double hipShoulderDelayThreshold;
+
+  /// 重心转移流畅度阈值
+  /// 小于此值认为是重心后移不足
+  final double weightShiftThreshold;
 }
 
 /// 问题检测器
@@ -187,6 +194,11 @@ class ProblemDetector {
     final coordinationScore = _calculateCoordinationScore(metrics);
     if (coordinationScore < _config.minCoordination) {
       problems.add(ProblemType.poorCoordination);
+    }
+
+    // 检测重心后移不足
+    if (metrics.transferSmoothness < _config.weightShiftThreshold) {
+      problems.add(ProblemType.insufficientWeightShift);
     }
 
     return problems;
