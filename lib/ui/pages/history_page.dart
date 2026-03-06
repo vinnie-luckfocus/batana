@@ -37,6 +37,7 @@ class _HistoryPageState extends State<HistoryPage> {
       setState(() {
         _records = records;
         _isLoading = false;
+        _error = null;
       });
     } catch (e) {
       if (!mounted) return;
