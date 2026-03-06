@@ -102,12 +102,12 @@ class _RealtimePoseCameraPreviewState extends State<RealtimePoseCameraPreview> {
   }
 
   /// 将 CameraImage 转换为字节数据
-  Uint8List? _convertCameraImageToBytes(CameraImage cameraImage) {
+  Uint8List? _convertCameraImageToBytes(camera.CameraImage cameraImage) {
     try {
       // 根据图像格式进行转换
-      if (cameraImage.format.group == ImageFormatGroup.jpeg) {
+      if (cameraImage.format.group == camera.ImageFormatGroup.jpeg) {
         return cameraImage.planes[0].bytes;
-      } else if (cameraImage.format.group == ImageFormatGroup.yuv420) {
+      } else if (cameraImage.format.group == camera.ImageFormatGroup.yuv420) {
         // YUV420 格式需要转换为 RGB
         // 这里简化处理，实际可能需要使用 image 包
         return cameraImage.planes[0].bytes;
