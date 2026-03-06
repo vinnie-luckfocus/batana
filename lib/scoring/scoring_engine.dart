@@ -3,6 +3,9 @@ import '../analysis/metrics_calculator.dart';
 import 'problem_detector.dart';
 import 'suggestion_generator.dart';
 
+// 重新导出 SuggestionGenerator 以保持向后兼容
+export 'suggestion_generator.dart' show SuggestionGenerator;
+
 /// 评分引擎配置
 class ScoringEngineConfig {
   const ScoringEngineConfig({
