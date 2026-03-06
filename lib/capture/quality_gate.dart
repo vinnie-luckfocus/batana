@@ -124,7 +124,7 @@ class QualityGate {
       // 将图像转换为灰度并计算亮度均值
       double brightness = 0;
 
-      if (image.format.group == ui.ImageByteGroupFormat.yuv420) {
+      if (image.format.group == ImageFormatGroup.yuv420) {
         // YUV 格式：使用 Y 通道作为亮度
         final yPlane = image.planes[0];
         final yBytes = yPlane.bytes;

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:camera/camera.dart';
+import 'package:camera/camera.dart' as camera;
 import '../analysis/pose_detector.dart';
 import '../analysis/pose_processor.dart';
 import 'camera_preview.dart';
@@ -50,7 +50,6 @@ class _RealtimePoseCameraPreviewState extends State<RealtimePoseCameraPreview> {
   final PoseDetector _poseDetector = PoseDetector();
   PoseData? _currentPoseData;
   bool _isProcessingFrame = false;
-  StreamSubscription? _frameSubscription;
 
   @override
   void initState() {
@@ -73,38 +72,33 @@ class _RealtimePoseCameraPreviewState extends State<RealtimePoseCameraPreview> {
     if (widget.cameraManager.controller == null) return;
 
     // 监听相机图像流
-    final stream = widget.cameraManager.controller!.buildImageStream();
+    widget.cameraManager.controller!.startImageStream((cameraImage) async {
+      if (_isProcessingFrame) return;
 
-    _frameSubscription = stream.listen(
-      (cameraImage) async {
-        if (_isProcessingFrame) return;
+      _isProcessingFrame = true;
 
-        _isProcessingFrame = true;
+      try {
+        // 将相机图像转换为字节数据
+        final imageBytes = _convertCameraImageToBytes(cameraImage);
+        if (imageBytes != null) {
+          // 处理图像并检测姿态
+          final result = await _poseDetector.processImage(imageBytes);
 
-        try {
-          // 将相机图像转换为字节数据
-          final imageBytes = _convertCameraImageToBytes(cameraImage);
-          if (imageBytes != null) {
-            // 处理图像并检测姿态
-            final result = await _poseDetector.processImage(imageBytes);
-
-            if (result.isSuccess && result.poseData != null) {
-              setState(() {
-                _currentPoseData = result.poseData;
-              });
-              widget.onPoseDetected?.call(result.poseData!);
-            }
+          if (result.isSuccess && result.poseData != null) {
+            setState(() {
+              _currentPoseData = result.poseData;
+            });
+            widget.onPoseDetected?.call(result.poseData!);
           }
-        } catch (e) {
-          widget.onError?.call('处理帧失败: $e');
-        } finally {
-          _isProcessingFrame = false;
         }
-      },
-      onError: (e) {
-        widget.onError?.call('图像流错误: $e');
-      },
-    );
+      } catch (e) {
+        widget.onError?.call('处理帧失败: $e');
+      } finally {
+        _isProcessingFrame = false;
+      }
+    }).catchError((e) {
+      widget.onError?.call('图像流错误: $e');
+    });
   }
 
   /// 将 CameraImage 转换为字节数据
@@ -131,13 +125,13 @@ class _RealtimePoseCameraPreviewState extends State<RealtimePoseCameraPreview> {
     await widget.cameraManager.switchCamera();
 
     // 重新启动帧处理
-    await _frameSubscription?.cancel();
     _startFrameProcessing();
   }
 
   @override
   void dispose() {
-    _frameSubscription?.cancel();
+    // 停止图像流
+    widget.cameraManager.controller?.stopImageStream().catchError((_) {});
     _poseDetector.dispose();
     super.dispose();
   }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:camera/camera.dart';
+import 'package:camera/camera.dart' as camera;
 import '../analysis/pose_detector.dart';
 import '../ui/widgets/pose_painter.dart';
 
@@ -8,7 +8,7 @@ import '../ui/widgets/pose_painter.dart';
 /// 提供实时摄像头预览功能，支持前后摄像头切换和姿态叠加
 class CameraPreview extends StatefulWidget {
   /// 摄像头控制器
-  final CameraController? controller;
+  final camera.CameraController? controller;
 
   /// 摄像头切换回调
   final VoidCallback? onSwitchCamera;
@@ -52,7 +52,7 @@ class _CameraPreviewState extends State<CameraPreview> {
         // 摄像头预览
         ClipRRect(
           borderRadius: BorderRadius.circular(16),
-          child: CameraPreview(widget.controller!),
+          child: camera.CameraPreview(widget.controller!),
         ),
 
         // 姿态叠加层
@@ -132,13 +132,13 @@ class _CameraPreviewState extends State<CameraPreview> {
 ///
 /// 负责摄像头的初始化、切换和控制
 class CameraManager {
-  List<CameraDescription> _cameras = [];
-  CameraController? _controller;
+  List<camera.CameraDescription> _cameras = [];
+  camera.CameraController? _controller;
   int _currentCameraIndex = 0;
   bool _isInitialized = false;
 
   /// 当前摄像头控制器
-  CameraController? get controller => _controller;
+  camera.CameraController? get controller => _controller;
 
   /// 是否已初始化
   bool get isInitialized => _isInitialized;
@@ -149,14 +149,14 @@ class CameraManager {
   /// 初始化摄像头
   Future<void> initialize() async {
     try {
-      _cameras = await availableCameras();
+      _cameras = await camera.availableCameras();
       if (_cameras.isEmpty) {
         throw Exception('未检测到可用摄像头');
       }
 
       // 默认使用后置摄像头
       _currentCameraIndex = _cameras.indexWhere(
-        (camera) => camera.lensDirection == CameraLensDirection.back,
+        (camera) => camera.lensDirection == camera.CameraLensDirection.back,
       );
       if (_currentCameraIndex < 0) _currentCameraIndex = 0;
 
@@ -173,9 +173,9 @@ class CameraManager {
     // 释放旧控制器
     await disposeController();
 
-    _controller = CameraController(
+    _controller = camera.CameraController(
       _cameras[_currentCameraIndex],
-      ResolutionPreset.high,
+      camera.ResolutionPreset.high,
       enableAudio: true,
     );
 
