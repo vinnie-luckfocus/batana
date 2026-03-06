@@ -8,10 +8,16 @@ import '../../capture/video_recorder.dart';
 import '../../capture/quality_gate.dart';
 import '../../storage/storage.dart';
 import '../widgets/recording_guide_overlay.dart';
+import '../theme/fitness_app_theme.dart';
 
 /// 录制页面 - 应用首页
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({
+    Key? key,
+    this.animationController,
+  }) : super(key: key);
+
+  final AnimationController? animationController;
 
   @override
   State<HomePage> createState() => _HomePageState();

@@ -1,43 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'ui/pages/home_page.dart';
-import 'ui/pages/result_page.dart';
-import 'ui/pages/history_page.dart';
-import 'ui/theme/app_theme.dart';
+import 'package:flutter/services.dart';
+import 'ui/pages/fitness_app_home_screen.dart';
+import 'ui/theme/fitness_app_theme.dart';
 
-/// 路由配置
-final GoRouter router = GoRouter(
-  initialLocation: '/',
-  routes: [
-    GoRoute(
-      path: '/',
-      name: 'home',
-      builder: (context, state) => const HomePage(),
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // 设置系统 UI 样式
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
     ),
-    GoRoute(
-      path: '/result',
-      name: 'result',
-      builder: (context, state) {
-        final extra = state.extra as Map<String, dynamic>?;
-        return ResultPage(
-          score: extra?['score'] as int? ?? 0,
-          velocity: extra?['velocity'] as double? ?? 0.0,
-          angle: extra?['angle'] as double? ?? 0.0,
-          coordination: extra?['coordination'] as double? ?? 0.0,
-          suggestions: (extra?['suggestions'] as List<dynamic>?)
-                  ?.map((e) => e.toString())
-                  .toList() ??
-              <String>[],
-        );
-      },
-    ),
-    GoRoute(
-      path: '/history',
-      name: 'history',
-      builder: (context, state) => const HistoryPage(),
-    ),
-  ],
-);
+  );
+
+  runApp(const BatanaApp());
+}
 
 /// 应用程序入口
 class BatanaApp extends StatelessWidget {
@@ -45,11 +28,11 @@ class BatanaApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
+    return MaterialApp(
       title: 'Batana',
-      theme: AppTheme.lightTheme,
-      routerConfig: router,
       debugShowCheckedModeBanner: false,
+      theme: FitnessAppTheme.theme,
+      home: const FitnessAppHomeScreen(),
     );
   }
 }
