@@ -31,7 +31,6 @@ flutter:
   assets:
     - assets/
     - assets/images/
-    - assets/fitness_app/
   fonts:
     - family: Roboto
       fonts:
