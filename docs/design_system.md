@@ -34,7 +34,7 @@
 
 | Token | 色值 | 用途 |
 |-------|------|------|
-| `AppColors.accent` | `#FF6F00` | CTA 按钮、重要操作 |
+| `AppColors.accent` | `#E65100` | CTA 按钮、重要操作 |
 | `AppColors.success` | `#43A047` | 成功状态 |
 | `AppColors.warning` | `#FFA726` | 警告状态 |
 | `AppColors.error` | `#E53935` | 错误状态 |
@@ -44,7 +44,7 @@
 | Token | 用途 |
 |-------|------|
 | `AppColors.textPrimary` (`#212121`) | 标题、重要内容（87% 不透明度） |
-| `AppColors.textSecondary` (`#757575`) | 辅助说明（60% 不透明度） |
+| `AppColors.textSecondary` (`#6D6D6D`) | 辅助说明 |
 | `AppColors.textDisabled` (`#BDBDBD`) | 禁用状态（38% 不透明度） |
 
 ### 代码示例
