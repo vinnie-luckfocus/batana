@@ -182,11 +182,6 @@ extension AnimationControllerExtension on AnimationController {
     await reverse();
   }
 
-  /// 重复播放动画
-  void repeat({bool reverse = false}) {
-    this.repeat(reverse: reverse);
-  }
-
   /// 停止并重置动画
   void stopAndReset() {
     stop();
