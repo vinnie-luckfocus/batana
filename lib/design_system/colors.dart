@@ -39,8 +39,8 @@ class AppColors {
   // 强调色（10%）- 活力与引导
   // ============================================================================
 
-  /// 强调色 - 活力橙，用于 CTA 按钮和重要操作
-  static const Color accent = Color(0xFFFF6F00);
+  /// 强调色 - 活力橙，用于 CTA 按钮和重要操作（WCAG AA 3:1 with white）
+  static const Color accent = Color(0xFFE65100);
 
   /// 成功色 - 绿色，表示成功状态
   static const Color success = Color(0xFF43A047);
@@ -58,8 +58,8 @@ class AppColors {
   /// 主要文字色 - 87% 不透明度，用于标题和重要内容
   static const Color textPrimary = Color(0xFF212121);
 
-  /// 次要文字色 - 60% 不透明度，用于辅助说明
-  static const Color textSecondary = Color(0xFF757575);
+  /// 次要文字色 - 用于辅助说明（WCAG AA 4.5:1 on background）
+  static const Color textSecondary = Color(0xFF6D6D6D);
 
   /// 禁用文字色 - 38% 不透明度，用于禁用状态
   static const Color textDisabled = Color(0xFFBDBDBD);
