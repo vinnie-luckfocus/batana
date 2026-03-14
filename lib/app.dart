@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'design_system/colors.dart';
 import 'design_system/neumorphic_theme.dart';
 import 'screens/home/home_screen.dart';
