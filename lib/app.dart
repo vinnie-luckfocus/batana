@@ -7,6 +7,7 @@ import 'design_system/colors.dart';
 import 'design_system/neumorphic_theme.dart';
 import 'providers/home_state.dart';
 import 'screens/home/home_screen.dart';
+import 'screens/record/record_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -64,11 +65,7 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/record',
-      builder: (context, state) => const Placeholder(
-        child: Scaffold(
-          body: Center(child: Text('录制页面 - 待实现')),
-        ),
-      ),
+      builder: (context, state) => const RecordScreen(),
     ),
     GoRoute(
       path: '/gallery',
