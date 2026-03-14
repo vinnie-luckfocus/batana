@@ -1,8 +1,8 @@
 ---
 name: ui-redesign
-status: backlog
+status: in-progress
 created: 2026-03-06T13:10:55Z
-progress: 0%
+progress: 12%
 prd: .claude/prds/ui-redesign.md
 github: https://github.com/vinnie-luckfocus/batana/issues/19
 ---
