@@ -21,11 +21,11 @@ class RecordingButton extends StatefulWidget {
   final double progress;
 
   const RecordingButton({
-    Key? key,
+    super.key,
     required this.isRecording,
     required this.onTap,
     this.progress = 0.0,
-  }) : super(key: key);
+  });
 
   @override
   State<RecordingButton> createState() => _RecordingButtonState();
@@ -109,13 +109,13 @@ class _RecordingButtonState extends State<RecordingButton>
   List<BoxShadow> get _normalShadows {
     return [
       BoxShadow(
-        color: Colors.black.withOpacity(0.15),
+        color: Colors.black.withValues(alpha: 0.15),
         offset: const Offset(4, 4),
         blurRadius: 10,
         spreadRadius: 1,
       ),
       BoxShadow(
-        color: Colors.white.withOpacity(0.8),
+        color: Colors.white.withValues(alpha: 0.8),
         offset: const Offset(-4, -4),
         blurRadius: 10,
         spreadRadius: 1,
@@ -127,13 +127,13 @@ class _RecordingButtonState extends State<RecordingButton>
   List<BoxShadow> get _pressedShadows {
     return [
       BoxShadow(
-        color: Colors.black.withOpacity(0.2),
+        color: Colors.black.withValues(alpha: 0.2),
         offset: const Offset(2, 2),
         blurRadius: 6,
         spreadRadius: -1,
       ),
       BoxShadow(
-        color: Colors.white.withOpacity(0.7),
+        color: Colors.white.withValues(alpha: 0.7),
         offset: const Offset(-2, -2),
         blurRadius: 6,
         spreadRadius: -1,
