@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:batana/design_system/colors.dart';
 import 'package:batana/design_system/spacing.dart';
+import 'package:batana/storage/storage.dart';
 import 'widgets/home_header.dart';
 import 'widgets/function_card.dart';
 import 'widgets/custom_bottom_nav_bar.dart';
+import 'widgets/recent_analysis_section.dart';
 
 /// 主界面
 ///
@@ -36,6 +38,12 @@ class _HomeScreenState extends State<HomeScreen> {
   void _onFunctionCardTap(String function) {
     // TODO: 导航到对应页面
     debugPrint('点击功能: $function');
+  }
+
+  /// 处理最近分析记录点击
+  void _onRecentRecordTap(AnalysisRecord record) {
+    // TODO: 导航到结果页
+    debugPrint('查看分析记录: ${record.id}');
   }
 
   @override
@@ -81,7 +89,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           onTap: () => _onFunctionCardTap('历史记录'),
                         ),
                         AppSpacing.verticalSpaceL,
-                        // 预留最近分析区域（Stream C 负责）
+                        // 最近分析区域
+                        RecentAnalysisSection(
+                          onRecordTap: _onRecentRecordTap,
+                        ),
                       ]),
                     ),
                   ),
