@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:batana/design_system/colors.dart';
 import 'package:batana/design_system/spacing.dart';
 import 'package:batana/design_system/typography.dart';
@@ -69,15 +70,8 @@ class _RecentAnalysisSectionState extends State<RecentAnalysisSection> {
     if (widget.onRecordTap != null) {
       widget.onRecordTap!(record);
     } else {
-      // 默认导航到结果页
-      debugPrint('点击记录: ${record.id}');
-      // TODO: 导航到结果页
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(
-      //     builder: (context) => AnalysisResultScreen(record: record),
-      //   ),
-      // );
+      // 使用 go_router 导航到结果页
+      context.push('/result', extra: record);
     }
   }
 
@@ -103,8 +97,8 @@ class _RecentAnalysisSectionState extends State<RecentAnalysisSection> {
             if (!_isLoading && _records.isNotEmpty)
               TextButton(
                 onPressed: () {
-                  // TODO: 导航到历史记录页
-                  debugPrint('查看全部历史记录');
+                  // 导航到历史记录页
+                  context.push('/history');
                 },
                 child: Text(
                   '查看全部',

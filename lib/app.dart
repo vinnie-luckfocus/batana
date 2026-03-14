@@ -35,10 +35,19 @@ class BatanaApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => HomeState(),
-      child: NeumorphicApp.router(
+      child: MaterialApp.router(
         title: 'Batana',
         debugShowCheckedModeBanner: false,
-        theme: AppNeumorphicTheme.lightTheme,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          scaffoldBackgroundColor: AppColors.background,
+        ),
+        builder: (context, child) {
+          return NeumorphicTheme(
+            theme: AppNeumorphicTheme.lightTheme,
+            child: child!,
+          );
+        },
         routerConfig: _router,
       ),
     );

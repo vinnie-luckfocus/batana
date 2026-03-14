@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:batana/design_system/colors.dart';
 import 'package:batana/design_system/spacing.dart';
+import 'package:batana/providers/home_state.dart';
 import 'package:batana/storage/storage.dart';
 import 'widgets/home_header.dart';
 import 'widgets/function_card.dart';
@@ -9,8 +12,8 @@ import 'widgets/recent_analysis_section.dart';
 
 /// 主界面
 ///
-/// 包含顶部标题栏、功能卡片区、底部导航栏
-/// 支持下拉刷新
+/// 包含顶部标题栏、功能卡片区、最近分析列表、底部导航栏
+/// 支持下拉刷新，使用 Provider 管理状态
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -21,10 +24,18 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    // 延迟初始化以等待 build 完成
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<HomeState>().initialize();
+    });
+  }
+
   /// 下拉刷新
   Future<void> _onRefresh() async {
-    // 模拟刷新延迟
-    await Future.delayed(const Duration(seconds: 1));
+    await context.read<HomeState>().refresh();
   }
 
   /// 处理底部导航栏点击
@@ -32,18 +43,40 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _currentIndex = index;
     });
+
+    // 根据索引导航到对应页面
+    switch (index) {
+      case 0:
+        // 首页 - 已在首页，无需导航
+        break;
+      case 1:
+        context.push('/history');
+        break;
+      case 2:
+        context.push('/record');
+        break;
+    }
   }
 
   /// 处理功能卡片点击
   void _onFunctionCardTap(String function) {
-    // TODO: 导航到对应页面
-    debugPrint('点击功能: $function');
+    switch (function) {
+      case '录制视频':
+        context.push('/record');
+        break;
+      case '选择相册':
+        context.push('/gallery');
+        break;
+      case '历史记录':
+        context.push('/history');
+        break;
+    }
   }
 
   /// 处理最近分析记录点击
   void _onRecentRecordTap(AnalysisRecord record) {
-    // TODO: 导航到结果页
-    debugPrint('查看分析记录: ${record.id}');
+    // 导航到结果页，传递记录数据
+    context.push('/result', extra: record);
   }
 
   @override
