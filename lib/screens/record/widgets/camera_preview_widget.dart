@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
-import '../../../../design_system/colors.dart';
+import '../../../design_system/colors.dart';
 
 /// 全屏相机预览组件
 ///
