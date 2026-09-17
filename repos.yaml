@@ -49,7 +49,7 @@ contracts:
   session-schema: { version: v1-draft, owner: batana-core, consumers: [batana-gui, batana-pi, batana-web] }
   capabilities:   { version: v1-draft, owner: batana-core, consumers: [batana-gui, batana-web] }
   ble-protocol:   { version: v1-draft, owner: batana-cap,  consumers: [batana-gui, batana-pi] }
-  sync-api:       { version: v1-draft, owner: batana-web,  consumers: [batana-gui, batana-pi] }
+  sync-api:       { version: 1.0-draft, owner: batana-web,  consumers: [batana-gui, batana-pi] }
 
 # 产品组合快照：各仓版本 + 契约 + 模型工件的合法搭配
 combos: {}
