@@ -10,6 +10,7 @@
 
 - 硬件：SoC 选型矩阵（调研详见 batana-pi `docs/research/2026-09-17-soc-camera-display.md`）——**RK3588 为 max/pro 档首选**（双 ISP 491 MPix/s×2、6 TOPS NPU、64-bit 内存）；RK3576（6 TOPS 同代 NPU、ISP 16M）为 OV9281 档降本版；RK3566（0.8 TOPS、ISP 触顶）仅承担 standard 档/联调开发板
 - 相机：双目 OV9281（1280×800@120fps RAW10，2×2-lane CSI，带宽利用率 25%）+ FSIN 硬同步；AR0234 双目仅 RK3588（双 ISP）可行；RK3588 无双目整模组现货，需自研转接板 + 设备树
+- 软件降级预案（plan B）：若 RK3588 侧 OV9281 驱动移植或 RKNN 模型转换受阻，EVT 切换 **RPi5 8GB** + 2× Arducam B0224（直插双 CSI、FSIN 飞线）+ HDMI 触控屏 + Hailo-8L AI HAT+（13 TOPS）；代价：双摄后无 DSI、Hailo 与 NVMe 抢唯一 PCIe、存储退守 RAM 环形缓冲，总价 ~¥2800–3500（调研见 batana-pi `docs/research/2026-09-17-rpi5-eval.md`）
 - 显示：5–7" MIPI DSI 触控屏（与双摄 CSI 独立 PHY，并发无冲突，三平台均成立）
 - 采集服务：双目硬同步采集、ISP 调优、**标定数据生产与失效检测**（本仓是 calibration-data 契约 owner）
 - 边缘推理：部署 batana-runtime（**RKNN/NPU 后端，P3 引入**），运行 pro-stereo / max 管线；IMU 触发裁剪只分析挥棒段
