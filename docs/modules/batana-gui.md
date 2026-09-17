@@ -8,10 +8,16 @@
 
 ## 技术选型：Qt6（C++/QML）
 
-- 一套代码覆盖全部目标平台：Qt6 原生支持 Android / iOS / macOS / 嵌入式 Linux（Qt for Device Creation）
-- 与 batana-runtime 同为 C++，**直接链接调用**，无 FFI 边界，性能与调试链路最短
+- 一套代码覆盖全部目标平台：Qt6 原生支持 Android / iOS / macOS / 嵌入式 Linux
+- 与 batana-runtime 同为 C++，**直接链接其稳定 C API**，性能与调试链路最短
 - 嵌入式端（batana-pi 显示屏）与移动端同一套 QML 界面体系，UI 复用度最高
 - 旧 Flutter MVP 代码已彻底放弃（2026-09-17 决策），不再迁移、不再维护
+
+### 已知风险与验证门槛（评审整改，详见 roadmap M0）
+
+- **许可证**：Qt 在 iOS 静态链接，LGPL v3 合规成本高；Qt for Device Creation（嵌入式）为商业许可。M0 spike 必须先出书面合规结论与预算。
+- **高帧率采集**：Qt Multimedia 不支持 iOS/Android 240fps，须内嵌原生采集层（ObjC++ AVFoundation / JNI Camera2 high-speed），"一套代码"边界相应收窄。
+- **降级预案**：M0 任一验证不通过 → 移动端回 Flutter（dart:ffi 调 runtime C API），嵌入式仍用 Qt，不强求统一 UI。
 
 ## 功能清单
 
@@ -29,7 +35,7 @@
 
 ## 技术栈与结构
 
-- Qt 6.8+（C++20 / QML）· CMake · Qt Bluetooth（BLE）· Qt Multimedia（相机）· Qt SQL（SQLite）
+- Qt 6.8+（C++20 / QML）· CMake · Qt Bluetooth（BLE，M0 验证 200Hz 吞吐）· 原生采集层（240fps）· Qt SQL（SQLite）
 ```
 batana-gui/
 ├── app/              # 应用入口与平台装配（android/ios/macos/embedded）

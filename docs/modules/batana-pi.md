@@ -8,11 +8,11 @@
 
 ## 功能清单
 
-- 硬件：RK3588（或 RPi5 起步）核心板、双目全局快门相机模组、5–7" 触控显示屏、电池（手持形态）、结构件
-- 采集服务：双目硬同步采集、ISP 调优、标定参数管理
-- 边缘推理：部署 batana-runtime（RKNN/NPU 后端），运行 pro-stereo / max 管线
-- 本地 UI：嵌入式 batana-gui（flutter-elinux）
-- 设备服务：BLE 服务端（接 cap）、Wi-Fi 云同步、OTA、功耗与散热管理
+- 硬件：**RK3588（唯一目标 SoC，或 RK3576 降本版）**、双目全局快门相机（OV9281/AR0234 + FSIN 硬同步）、5–7" 触控显示屏；形态（桌面/三脚架 vs 手持）由 EVT 散热实测决定（满载 6–10W）
+- 采集服务：双目硬同步采集、ISP 调优、**标定数据生产与失效检测**（本仓是 calibration-data 契约 owner）
+- 边缘推理：部署 batana-runtime（**RKNN/NPU 后端，P3 引入**），运行 pro-stereo / max 管线；IMU 触发裁剪只分析挥棒段
+- 本地 UI：嵌入式 batana-gui（**Qt6 嵌入式 Linux 构建，与移动端同源**）
+- 设备服务：BLE **Central**（连接 cap）、Wi-Fi 云同步、系统镜像 OTA、功耗与散热管理
 
 ## 边界
 
@@ -33,9 +33,10 @@ batana-pi/
 
 ## 对外契约
 
-- 消费：runtime（core）、ble-protocol（cap 侧服务端实现）、sync-api（web）
-- 产出：标定数据格式（登记进 session-schema）
+- 定义：**device-interfaces（含 calibration-data）**——采集服务接口与标定数据格式
+- 消费：runtime-api（core）、ble-protocol（作为 Central 连接 cap）、sync-api（web）
+- 产出：标定数据（core 引用进 session-schema 的 `calibration` 字段）
 
 ## 里程碑映射
 
-P3：EVT 样机 + 软件栈 v0.1；P5：DVT 小批量
+P3：软件栈 v0.1 + EVT（开发板+模组先行，形态由热实测决定）；P5+：DVT 小批量

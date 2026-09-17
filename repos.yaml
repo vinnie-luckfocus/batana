@@ -46,16 +46,20 @@ repos:
     defines_contracts: [sync-api]
 
 contracts:
-  session-schema: { version: v1-draft, owner: batana-core, consumers: [batana-gui, batana-pi, batana-web] }
-  capabilities:   { version: v1-draft, owner: batana-core, consumers: [batana-gui, batana-web] }
-  ble-protocol:   { version: v1-draft, owner: batana-cap,  consumers: [batana-gui, batana-pi] }
-  sync-api:       { version: 1.0-draft, owner: batana-web,  consumers: [batana-gui, batana-pi] }
+  # 版本写法：草案期 1.0-draft，固化后 1.0（详见 docs/versioning.md）
+  session-schema:    { version: 1.0-draft, owner: batana-core, consumers: [batana-gui, batana-pi, batana-web] }
+  capabilities:      { version: 1.0-draft, owner: batana-core, consumers: [batana-gui, batana-web] }
+  ble-protocol:      { version: 1.0-draft, owner: batana-cap,  consumers: [batana-gui, batana-pi] }
+  sync-api:          { version: 1.0-draft, owner: batana-web,  consumers: [batana-gui, batana-pi] }
+  runtime-api:       { version: planned,   owner: batana-core, consumers: [batana-gui, batana-pi] }   # P1 随 runtime v0.1 落地
+  device-interfaces: { version: 1.0-draft, owner: batana-pi,   consumers: [batana-core, batana-gui] } # 含 calibration-data
 
-# 产品组合快照：各仓版本 + 契约 + 模型工件的合法搭配
+# 产品组合快照：各仓版本 + 契约 + 模型工件的合法搭配（准入条件见 docs/versioning.md 第 3 节）
 combos: {}
   # combo-2027A:
   #   batana-core: v0.2.0
   #   batana-gui: v0.3.0
   #   batana-cap: { software: v0.1.0, hardware: cap-evt2 }
-  #   contracts: { session-schema: v1, ble-protocol: v1 }
-  #   models: { pose2d: "1.3.0" }
+  #   contracts: { session-schema: "1.0", ble-protocol: "1.0" }
+  #   models: { pose2d: "1.3.0" }   # 只引用 batana-core models/registry.yaml，不复制
+  #   verified: { date: "2027-03-01", by: ci, notes: 契约测试通过 + combo 冒烟清单跑通 }
