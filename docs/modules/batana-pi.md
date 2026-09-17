@@ -8,10 +8,12 @@
 
 ## 功能清单
 
-- 硬件：**RK3588（唯一目标 SoC，或 RK3576 降本版）**、双目全局快门相机（OV9281/AR0234 + FSIN 硬同步）、5–7" 触控显示屏；形态（桌面/三脚架 vs 手持）由 EVT 散热实测决定（满载 6–10W）
+- 硬件：SoC 选型矩阵（调研详见 batana-pi `docs/research/2026-09-17-soc-camera-display.md`）——**RK3588 为 max/pro 档首选**（双 ISP 491 MPix/s×2、6 TOPS NPU、64-bit 内存）；RK3576（6 TOPS 同代 NPU、ISP 16M）为 OV9281 档降本版；RK3566（0.8 TOPS、ISP 触顶）仅承担 standard 档/联调开发板
+- 相机：双目 OV9281（1280×800@120fps RAW10，2×2-lane CSI，带宽利用率 25%）+ FSIN 硬同步；AR0234 双目仅 RK3588（双 ISP）可行；RK3588 无双目整模组现货，需自研转接板 + 设备树
+- 显示：5–7" MIPI DSI 触控屏（与双摄 CSI 独立 PHY，并发无冲突，三平台均成立）
 - 采集服务：双目硬同步采集、ISP 调优、**标定数据生产与失效检测**（本仓是 calibration-data 契约 owner）
 - 边缘推理：部署 batana-runtime（**RKNN/NPU 后端，P3 引入**），运行 pro-stereo / max 管线；IMU 触发裁剪只分析挥棒段
-- 本地 UI：嵌入式 batana-gui（**Qt6 嵌入式 Linux 构建，与移动端同源**）
+- 本地 UI：嵌入式 batana-gui（**Qt6/QML，嵌入式 Linux 构建**）
 - 设备服务：BLE **Central**（连接 cap）、Wi-Fi 云同步、系统镜像 OTA、功耗与散热管理
 
 ## 边界
