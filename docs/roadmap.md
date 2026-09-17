@@ -39,10 +39,10 @@ P0 生态重组
 
 | 验证项 | 方法 | 通过标准 | 降级预案 |
 |---|---|---|---|
-| RK3588 NPU 基准 | RK3588 开发板跑 BlazePose 级 TFLite→RKNN 模型 | 单帧 ≤ 20ms（INT8） | max 档延迟目标放宽或管线裁剪 |
+| RK3588 NPU 基准 | Radxa ROCK 5B+ 16GB（EVT 选定开发板）跑 BlazePose 级 TFLite→RKNN 模型 | 单帧 ≤ 20ms（INT8） | max 档延迟目标放宽或管线裁剪 |
 | Qt6 嵌入式构建链 | Yocto/meta-qt6 在 RK3588 开发板构建 batana-gui HelloWorld 并点亮屏幕 | 可复现构建 + eglfs 显示正常 | pi 显示改用 LVGL 轻量界面（功能裁剪） |
 | Flutter 高帧率采集 | batana-app 原型在 iOS/Android 真机 240fps 采集 | 稳定采集 10 分钟 | 降帧 120fps 并评估精度影响 |
-| 双目 120fps RAW 直通 | RK3588 开发板 VICAP RAW 采集双 OV9281@120fps（含 FSIN 帧配对精度），依据 docs/modules/batana-pi.md 调研结论 | 双摄 120fps 稳定采集 30 分钟、帧配对误差 < 100µs | 降帧 60fps；AR0234 方案退回 OV9281 |
+| 双目 120fps RAW 直通 | ROCK 5B+ 双 CSI 接双 OV9281（驱动需移植，BSP 6.1 + DT overlay，VICAP RAW 旁路 rkaiq；FSIN 经 40-pin PWM 飞线） | 双摄 120fps 稳定采集 30 分钟、帧配对误差 < 100µs | 降帧 60fps；AR0234 方案退回 OV9281 |
 
 ## P1 — core 单目管线产品化（2026 Q4，约 12 人周）
 
