@@ -53,11 +53,11 @@ repos:
 
 contracts:
   # 版本写法：草案期 1.0-draft，固化后 1.0（详见 docs/versioning.md）
-  session-schema:    { version: 1.0-draft, owner: batana-core, consumers: [batana-app, batana-gui, batana-pi, batana-web] }
-  capabilities:      { version: 1.0-draft, owner: batana-core, consumers: [batana-app, batana-gui, batana-web] }
-  ble-protocol:      { version: 1.0-draft, owner: batana-cap,  consumers: [batana-app, batana-pi] }
-  sync-api:          { version: 1.0-draft, owner: batana-web,  consumers: [batana-app, batana-pi] }
-  runtime-api:       { version: planned,   owner: batana-core, consumers: [batana-app, batana-gui, batana-pi] }   # P1 随 runtime v0.1 落地
+  session-schema:    { version: "1.0", owner: batana-core, consumers: [batana-app, batana-gui, batana-pi, batana-web] }
+  capabilities:      { version: "1.0", owner: batana-core, consumers: [batana-app, batana-gui, batana-web] }
+  ble-protocol:      { version: "1.0", owner: batana-cap,  consumers: [batana-app, batana-pi] }
+  sync-api:          { version: "1.0", owner: batana-web,  consumers: [batana-app, batana-pi] }
+  runtime-api:       { version: planned, owner: batana-core, consumers: [batana-app, batana-gui, batana-pi] }   # P1 随 runtime v0.1 落地
   device-interfaces: { version: 1.0-draft, owner: batana-pi,   consumers: [batana-core, batana-gui] } # 含 calibration-data
 
 # 产品组合快照：各仓版本 + 契约 + 模型工件的合法搭配（准入条件见 docs/versioning.md 第 3 节）

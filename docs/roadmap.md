@@ -31,7 +31,7 @@ P0 生态重组
 - [x] 旧 Flutter MVP 方案彻底放弃（2026-09-17 决策），代码留存主仓 git 历史 tag `archive/flutter-mvp` 仅作参考
 - [x] 司令塔仓库移除产品代码，保留 logo、文档、PM 体系
 - [x] 四路方案评审与高优先级整改（时钟同步、IMU 量程、契约对齐、BLE 角色、SoC 冻结）
-- [ ] 契约 v1 定稿评审：session-schema / ble-protocol / sync-api / capabilities（当前均为 1.0-draft）
+- [x] 契约 v1 定稿评审：session-schema / ble-protocol / sync-api / capabilities 已于 2026-09-17 冻结为 **1.0 稳定版**（终检修复 9 项阻塞问题：sync-api 补 duration_ms/calibration/clock_anchor、统一 cap_id/session_id/metrics 必填性、schema 补 video.sha256 与 64 位时钟声明、capabilities 补变更记录）
 
 ## M0 — 技术验证 spike（2026-10，P1 前置门槛）
 
