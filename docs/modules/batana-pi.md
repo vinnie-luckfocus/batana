@@ -9,7 +9,9 @@
 ## 功能清单
 
 - 硬件：SoC 选型矩阵（调研详见 batana-pi `docs/research/2026-09-17-soc-camera-display.md`）——**RK3588 为 max/pro 档首选**（双 ISP 491 MPix/s×2、6 TOPS NPU、64-bit 内存）；RK3576（6 TOPS 同代 NPU、ISP 16M）为 OV9281 档降本版；RK3566（0.8 TOPS、ISP 触顶）仅承担 standard 档/联调开发板
-- 相机：**VEYE RAW-MIPI-SC132M × 2**（SC132GS mono 全局快门，1280×1080@120fps，15-pin RPi 兼容口，经 Radxa 31P→15P 排线直连 ROCK 5B+ 双 CSI；J2 触发脚硬同步）；M12 f=2.8mm 低畸变镜头（备选 2.5mm）；基线 80–120mm 可调支架；EVT 相机预算 ≈¥1550–1650（采购清单见 batana-pi `docs/research/2026-09-17-stereo-camera-bom.md`）；Plan B：OV9281（主线 ov9282.c 驱动）
+- 相机（EVT 双轨并行，挥棒场景 3D 重建精度实测 15mm@2.5m 定案）：
+  - 路线 A（USB 整模组，零驱动，并行首选）：OV9281 双目 USB3 无压缩整模组、基线可调 60–120mm（Goobuy/淘宝同款，¥300–800 档，买 2–3 家样品）；接任一 USB3 口或 Type-C 全功能口直插；采购前书面确认无压缩 MONO8、真 USB3、基线范围（调研见 batana-pi `docs/research/2026-09-17-usb-stereo-module.md`）
+  - 路线 B（MIPI 双模组，plan B）：VEYE RAW-MIPI-SC132M × 2（SC132GS mono，BSP 树内驱动免移植，RAW10 无损上限更高，≈¥1550–1650；清单见 `docs/research/2026-09-17-stereo-camera-bom.md`）
 - 软件降级预案（plan B）：若 RK3588 侧 OV9281 驱动移植或 RKNN 模型转换受阻，EVT 切换 **RPi5 8GB** + 2× Arducam B0224（直插双 CSI、FSIN 飞线）+ HDMI 触控屏 + Hailo-8L AI HAT+（13 TOPS）；代价：双摄后无 DSI、Hailo 与 NVMe 抢唯一 PCIe、存储退守 RAM 环形缓冲，总价 ~¥2800–3500（调研见 batana-pi `docs/research/2026-09-17-rpi5-eval.md`）
 - 显示：5–7" MIPI DSI 触控屏（与双摄 CSI 独立 PHY，并发无冲突，三平台均成立）
 - 采集服务：双目硬同步采集、ISP 调优、**标定数据生产与失效检测**（本仓是 calibration-data 契约 owner）
