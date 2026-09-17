@@ -36,8 +36,9 @@
 | 仓库 | 职责 | 技术栈 | 状态 |
 |---|---|---|---|
 | [batana-core](https://github.com/vinnie-luckfocus/batana-core) | 模型系统核心：管线 / 算子 / 推理运行时 / 训练 | Python + C++17 | planning |
-| [batana-gui](https://github.com/vinnie-luckfocus/batana-gui) | 跨平台 GUI：Android / iOS / macOS / 嵌入式 | Qt6（C++/QML） | planning |
-| [batana-pi](https://github.com/vinnie-luckfocus/batana-pi) | 双目边缘计算设备（双目相机 + 边缘盒 + 显示屏） | Linux / C++ / Python | planning |
+| [batana-app](https://github.com/vinnie-luckfocus/batana-app) | 跨平台移动/桌面应用：iOS / Android / macOS / Windows | Flutter | planning |
+| [batana-gui](https://github.com/vinnie-luckfocus/batana-gui) | 嵌入式 GUI：batana-pi 显示屏本地界面 | Qt6（C++/QML） | planning |
+| [batana-pi](https://github.com/vinnie-luckfocus/batana-pi) | 双目边缘计算设备（双目相机 + 边缘盒 + 显示屏） | Linux (RK3588) / C++ / Python | planning |
 | [batana-cap](https://github.com/vinnie-luckfocus/batana-cap) | 棒尾 IMU 传感器（陀螺仪/加速度计 + 圆屏） | Zephyr RTOS / C | planning |
 | [batana-web](https://github.com/vinnie-luckfocus/batana-web) | Web 管理平台：数据统计 / 趋势 / 多用户数仓 | Next.js / Postgres | planning |
 
@@ -71,7 +72,7 @@ git submodule update --remote --merge
 ## 路线图
 
 - **P0 生态重组**（2026-09）：仓库拆分、契约 v1-draft、司令塔转型 —— 进行中
-- **P1 core 单目管线**（2026 Q4）：standard-vision，batana-runtime v0.1 + Qt6 GUI 骨架
+- **P1 core 单目管线**（2026 Q4）：standard-vision，batana-runtime v0.1 + batana-app(Flutter) 骨架
 - **P2 cap 原型与 IMU 融合**（2027 Q1）：standard-imu / pro-fusion
 - **P3 pi 原型与双目 max**（2027 Q2）：pro-stereo / max
 - **P4 web 平台 v1**（2027 Q3）：数据统计与趋势、云同步

@@ -20,8 +20,9 @@ batana（本仓库）是 **Batana 生态的司令塔（meta 仓库）**，不含
 | 仓库 | 职责 | 技术栈 |
 |---|---|---|
 | batana-core | 模型系统核心（管线/算子/推理运行时/训练） | Python + C++17 |
-| batana-gui | 跨平台 GUI（Android/iOS/macOS/嵌入式） | Qt6（C++/QML） |
-| batana-pi | 双目边缘计算设备 | Linux / C++ / Python |
+| batana-app | 跨平台移动/桌面应用（iOS/Android/macOS/Windows） | Flutter |
+| batana-gui | 嵌入式 GUI（batana-pi 显示屏） | Qt6（C++/QML） |
+| batana-pi | 双目边缘计算设备 | Linux (RK3588) / C++ / Python |
 | batana-cap | 棒尾 IMU 传感器 | Zephyr RTOS / C |
 | batana-web | Web 管理平台（统计/趋势/数仓） | Next.js / Postgres |
 
@@ -29,7 +30,8 @@ batana（本仓库）是 **Batana 生态的司令塔（meta 仓库）**，不含
 
 ### 历史决策
 
-- 2026-09-17：旧 Flutter MVP 方案彻底放弃，代码留存 tag `archive/flutter-mvp` 仅作参考；GUI 改用 Qt6 全新重写。
+- 2026-09-17：旧 Flutter MVP 方案彻底放弃，代码留存 tag `archive/flutter-mvp` 仅作参考。
+- 2026-09-17：界面层拆分——batana-app（Flutter，iOS/Android/macOS/Windows）+ batana-gui（Qt6 嵌入式，仅 batana-pi 显示屏）。注意：app 虽用 Flutter 但全新实现，不复用旧 MVP 代码。
 
 ## Project Management Workflow
 
@@ -103,8 +105,8 @@ batana（本仓库）是 **Batana 生态的司令塔（meta 仓库）**，不含
 
 当前重点：**P0 收尾 → M0 技术验证 spike → P1 core 单目管线产品化**
 - P0 剩余：四份契约（session-schema / ble-protocol / sync-api / capabilities）从 1.0-draft 评审定稿为 1.0
-- M0（P1 前置门槛）：Qt6 iOS 合规与 240fps 采集、Qt BLE 200Hz 吞吐、RK3588 NPU 基准——任一不通过则启动降级预案（见 roadmap）
-- P1 目标：batana-runtime v0.1（TFLite 唯一后端 + 稳定 C API）+ batana-gui(Qt6) 骨架，macOS+Android 走通 standard-vision 全链路
+- M0（P1 前置门槛）：RK3588 NPU 基准、Qt6 嵌入式构建链、Flutter 240fps 真机采集——任一不通过则启动降级预案（见 roadmap）
+- P1 目标：batana-runtime v0.1（TFLite 唯一后端 + 稳定 C API）+ batana-app(Flutter) 骨架，macOS+Android 走通 standard-vision 全链路
 
 ## 核心原则
 
