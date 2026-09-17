@@ -101,9 +101,10 @@ batana（本仓库）是 **Batana 生态的司令塔（meta 仓库）**，不含
 
 ## Current Focus
 
-当前重点：**P0 生态重组收尾 → P1 core 单目管线产品化**
-- P0 剩余：契约 v1-draft 评审定稿（session-schema / ble-protocol / sync-api）
-- P1 目标：batana-runtime v0.1 + batana-gui(Qt6) 骨架，走通 standard-vision 全链路
+当前重点：**P0 收尾 → M0 技术验证 spike → P1 core 单目管线产品化**
+- P0 剩余：四份契约（session-schema / ble-protocol / sync-api / capabilities）从 1.0-draft 评审定稿为 1.0
+- M0（P1 前置门槛）：Qt6 iOS 合规与 240fps 采集、Qt BLE 200Hz 吞吐、RK3588 NPU 基准——任一不通过则启动降级预案（见 roadmap）
+- P1 目标：batana-runtime v0.1（TFLite 唯一后端 + 稳定 C API）+ batana-gui(Qt6) 骨架，macOS+Android 走通 standard-vision 全链路
 
 ## 核心原则
 
