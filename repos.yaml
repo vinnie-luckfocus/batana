@@ -1,0 +1,61 @@
+# Batana 生态仓库清单与版本兼容矩阵（唯一权威登记处）
+# 维护规则：子仓发版 / 契约变更后必须更新本文件。详见 docs/versioning.md
+meta:
+  updated: "2026-09-17"
+  schema: 1
+
+repos:
+  batana:
+    role: 司令塔（产品定义 / 版本 / 进度 / 素材 / 契约索引）
+    url: https://github.com/vinnie-luckfocus/batana
+    version: v0.1.0
+    status: active
+    progress: 10
+  batana-core:
+    role: 模型系统核心（管线 / 算子 / 推理运行时 / 训练）
+    url: https://github.com/vinnie-luckfocus/batana-core
+    version: null
+    status: planning
+    progress: 0
+    defines_contracts: [session-schema, capabilities]
+  batana-gui:
+    role: 跨平台 GUI（Qt6：Android / iOS / macOS / 嵌入式 Linux）
+    url: https://github.com/vinnie-luckfocus/batana-gui
+    version: null
+    status: planning
+    progress: 0       # 旧 Flutter MVP 已放弃（2026-09-17），Qt6 全新重写
+  batana-pi:
+    role: 双目边缘计算设备（硬件 + 采集服务 + 系统镜像）
+    url: https://github.com/vinnie-luckfocus/batana-pi
+    version: null
+    status: planning
+    progress: 0
+  batana-cap:
+    role: 棒尾 IMU 传感器（硬件 + Zephyr 固件）
+    url: https://github.com/vinnie-luckfocus/batana-cap
+    version: null
+    status: planning
+    progress: 0
+    defines_contracts: [ble-protocol]
+  batana-web:
+    role: Web 管理平台（统计 / 趋势 / 多用户数仓）
+    url: https://github.com/vinnie-luckfocus/batana-web
+    version: null
+    status: planning
+    progress: 0
+    defines_contracts: [sync-api]
+
+contracts:
+  session-schema: { version: v1-draft, owner: batana-core, consumers: [batana-gui, batana-pi, batana-web] }
+  capabilities:   { version: v1-draft, owner: batana-core, consumers: [batana-gui, batana-web] }
+  ble-protocol:   { version: v1-draft, owner: batana-cap,  consumers: [batana-gui, batana-pi] }
+  sync-api:       { version: v1-draft, owner: batana-web,  consumers: [batana-gui, batana-pi] }
+
+# 产品组合快照：各仓版本 + 契约 + 模型工件的合法搭配
+combos: {}
+  # combo-2027A:
+  #   batana-core: v0.2.0
+  #   batana-gui: v0.3.0
+  #   batana-cap: { software: v0.1.0, hardware: cap-evt2 }
+  #   contracts: { session-schema: v1, ble-protocol: v1 }
+  #   models: { pose2d: "1.3.0" }

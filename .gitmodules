@@ -1,0 +1,20 @@
+[submodule "projects/core"]
+	path = projects/core
+	url = ../batana-core
+	branch = main
+[submodule "projects/gui"]
+	path = projects/gui
+	url = ../batana-gui
+	branch = main
+[submodule "projects/pi"]
+	path = projects/pi
+	url = ../batana-pi
+	branch = main
+[submodule "projects/cap"]
+	path = projects/cap
+	url = ../batana-cap
+	branch = main
+[submodule "projects/web"]
+	path = projects/web
+	url = ../batana-web
+	branch = main

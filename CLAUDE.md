@@ -6,34 +6,34 @@
 
 ## Project Overview
 
-batana 是一个棒球挥棒动作分析系统，采用分阶段交付策略：
+batana（本仓库）是 **Batana 生态的司令塔（meta 仓库）**，不含产品代码。职责：
 
-### 产品路线图
-- **MVP (Phase 1)**: Flutter + MediaPipe 单目视觉分析，本地评分与历史记录
-- **V2 (Phase 2)**: 可视化增强（骨骼叠加、关键帧）、分项评分、云同步
-- **V3 (Phase 3)**: IMU 蓝牙传感器集成，视觉+惯性数据融合分析
-- **V4 (Phase 4)**: 教练模式、训练计划、周期报告
+- 产品功能定义与总体架构（`docs/architecture.md`）
+- 模型能力分级 max / pro / standard（`docs/model-tiers.md`）
+- 路线图与项目进度（`docs/roadmap.md`、`.claude/` CCPM 体系）
+- 软硬件版本与兼容矩阵（`repos.yaml`、`docs/versioning.md`）
+- 素材资料与品牌资产（`assets/logo.png`、`docs/assets/`）
+- 子仓库以 git submodule 挂载于 `projects/`，锁定到兼容验证过的版本
 
-### 技术架构
-- **客户端**: Flutter (iOS/Android 跨平台)
-- **姿态识别**: MediaPipe Pose (本地推理)
-- **评分引擎**: 规则引擎 (MVP) → ML 模型 (V2+)
-- **存储**: SQLite (MVP) → 云同步 (V2+)
-- **IMU 通信**: BLE (Bluetooth Low Energy, V3+)
+### 子仓库
 
-### 模块划分
-```
-capture/     # 视频采集与预处理
-analysis/    # 姿态识别与指标计算
-scoring/     # 评分与建议生成
-storage/     # 数据持久化
-ble/         # 蓝牙通信 (V3+)
-ui/          # 用户界面
-```
+| 仓库 | 职责 | 技术栈 |
+|---|---|---|
+| batana-core | 模型系统核心（管线/算子/推理运行时/训练） | Python + C++17 |
+| batana-gui | 跨平台 GUI（Android/iOS/macOS/嵌入式） | Qt6（C++/QML） |
+| batana-pi | 双目边缘计算设备 | Linux / C++ / Python |
+| batana-cap | 棒尾 IMU 传感器 | Zephyr RTOS / C |
+| batana-web | Web 管理平台（统计/趋势/数仓） | Next.js / Postgres |
+
+各模块功能与边界：`docs/modules/<repo>.md`。**跨仓库改动必须先查契约归属表**（见 architecture.md 第 4 节）。
+
+### 历史决策
+
+- 2026-09-17：旧 Flutter MVP 方案彻底放弃，代码留存 tag `archive/flutter-mvp` 仅作参考；GUI 改用 Qt6 全新重写。
 
 ## Project Management Workflow
 
-本项目使用 CCPM (Claude Code Project Management) 系统管理开发流程。
+本项目使用 CCPM (Claude Code Project Management) 系统管理开发流程。跨仓库 Epic 在司令塔立项，任务落到对应子仓库的 GitHub Issues。
 
 ### 核心命令
 ```bash
@@ -67,35 +67,21 @@ ui/          # 用户界面
 └── context/           # 项目上下文
 ```
 
-### 开发流程
-1. **需求阶段**: `/pm:prd-new` → 创建 PRD
-2. **规划阶段**: `/pm:prd-parse` → 转换为 Epic
-3. **拆解阶段**: `/pm:epic-decompose` → 拆解为任务
-4. **同步阶段**: `/pm:epic-sync` → 同步到 GitHub
-5. **开发阶段**: `/pm:issue-start` → 开始开发
-6. **完成阶段**: `/pm:issue-close` → 关闭任务
-
 ## Development Guidelines
 
 ### 语言要求
 - 所有对话、文档、代码注释均使用中文
 - 变量名、函数名使用英文（遵循各语言规范）
 
-### 代码规范
-- 遵循现有代码模式
-- 模块化设计，高内聚低耦合
+### 司令塔仓库规则
+- 不在本仓库写产品代码；产品代码一律进入对应子仓库
+- 子仓库发版 / 契约变更后必须更新 `repos.yaml`
+- 文档修订需更新文件头部的版本与日期
+- 子模块指针只在 combo 兼容验证后前进
+
+### 文档规范
 - 单个文件不超过 800 行
-- 函数不超过 50 行
-
-### 测试要求
-- 单元测试覆盖率 ≥ 80%
-- 提交前运行测试：`flutter test` 或对应测试命令
-- 关键算法必须有测试覆盖
-
-### 性能目标
-- MVP: 单次分析 ≤ 15 秒
-- V2: 单次分析 ≤ 10 秒
-- V3: 融合分析 ≤ 8 秒
+- 模块文档固定结构：定位 / 功能清单 / 边界（做与不做）/ 技术栈与结构 / 对外契约 / 里程碑映射
 
 ## Key Rules
 
@@ -115,15 +101,9 @@ ui/          # 用户界面
 
 ## Current Focus
 
-当前重点：**MVP 阶段开发**
-- 核心目标：验证"录制→分析→评分→展示"端到端价值
-- 关键交付：视频录制、MediaPipe 集成、评分引擎、结果展示
-- 成功指标：分析完成率 ≥ 85%，D7 留存率 ≥ 25%
-
-## 审核整改要求
-- 使用codex进行多维度审核
-- 审核结果记录到对应文件
-- 整改后到结果更新到对应文件
+当前重点：**P0 生态重组收尾 → P1 core 单目管线产品化**
+- P0 剩余：契约 v1-draft 评审定稿（session-schema / ble-protocol / sync-api）
+- P1 目标：batana-runtime v0.1 + batana-gui(Qt6) 骨架，走通 standard-vision 全链路
 
 ## 核心原则
 
