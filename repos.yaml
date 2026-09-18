@@ -1,7 +1,7 @@
 # Batana 生态仓库清单与版本兼容矩阵（唯一权威登记处）
 # 维护规则：子仓发版 / 契约变更后必须更新本文件。详见 docs/versioning.md
 meta:
-  updated: "2026-09-17"
+  updated: "2026-09-18"
   schema: 1
 
 repos:
@@ -31,7 +31,7 @@ repos:
     status: planning
     progress: 0
   batana-pi:
-    role: 双目边缘计算设备（硬件 + 采集服务 + 系统镜像）
+    role: 双目边缘计算设备（硬件 + 外观/外壳 + 采集服务 + 系统镜像）
     url: https://github.com/vinnie-luckfocus/batana-pi
     version: null
     status: planning

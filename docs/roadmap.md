@@ -1,6 +1,8 @@
 # Batana 生态路线图
 
-> 版本：v0.3（2026-09-18）· 粒度：阶段（Phase）→ 里程碑（M）· 进度跟踪以 `repos.yaml` 与各仓 GitHub Projects 为准
+> 版本：v0.4（2026-09-18）· 粒度：阶段（Phase）→ 里程碑（M）· 进度跟踪以 `repos.yaml` 与各仓 GitHub Projects 为准
+>
+> v0.4 变更：batana-pi 新增外观与外壳（ID/MD）工作线——EVT 原型定为开发板+相机模组+脚架/围栏挂钩（无正式外壳），外观 ID 与外壳工程在 DVT 冻结。
 >
 > v0.3 变更：M0 双目验证项对齐相机双轨决策（USB3 整模组并行首选 + VEYE MIPI plan B），新增 `docs/m0-setup.md` 物料与搭建入口。
 >
@@ -81,7 +83,7 @@ P0 生态重组
 - M3.1 pi 软件栈 v0.1（RK3588 开发板 + USB3 全局快门双目模组先行）：双目同步采集服务、标定工具、runtime RKNN 后端、IMU 触发裁剪（只分析挥棒段 0.3–0.5s）
 - M3.2 batana-core v0.3：双目 3D 管线（pose3d、bat_traj3d、kinematic_seq、impact_point、biomech_report）
 - M3.3 嵌入式 batana-gui：Qt6/QML 嵌入式构建（Yocto 集成）部署到 pi 显示屏
-- M3.4 pi EVT 形态决策：满载 NPU 30 分钟温升/降频曲线实测 → 桌面/三脚架 vs 手持（RK3588 满载 6–10W，手持存疑）
+- M3.4 pi EVT 形态决策：满载 NPU 30 分钟温升/降频曲线实测 → 桌面/三脚架 vs 手持（RK3588 满载 6–10W，手持存疑）；**EVT 结构原型 = 开发板 + 相机模组 + 脚架/围栏挂钩支架（无正式外壳）**
 - 出口标准：pi+cap 全量分析 ≤ 8s（口径同 P1，含 IMU 触发裁剪）；3D 棒轨迹空间误差 ≤ 15mm@2m（真值=标定板网格回放比对，规程见 device-interfaces 契约）
 
 ## P4 — batana-web 平台 v1（2027 Q4，约 8 人周）
@@ -96,7 +98,7 @@ P0 生态重组
 ## P5+ — 后续（2028 起，stretch）
 
 - 多身份/多用户数仓（球员/教练/机构）、教练模式、AI 动作指导模型化
-- cap/pi DVT 小批量
+- cap/pi DVT 小批量（pi 含外观 ID 与外壳工程冻结、DFM 评估）
 - pro-fusion 的 bat_traj3d 由粗略升级为可用（视频-IMU 联合标定自动化）
 
 ## 风险与依赖
