@@ -1,6 +1,8 @@
 # Batana 生态路线图
 
-> 版本：v0.2（2026-09-17，评审整改版）· 粒度：阶段（Phase）→ 里程碑（M）· 进度跟踪以 `repos.yaml` 与各仓 GitHub Projects 为准
+> 版本：v0.3（2026-09-18）· 粒度：阶段（Phase）→ 里程碑（M）· 进度跟踪以 `repos.yaml` 与各仓 GitHub Projects 为准
+>
+> v0.3 变更：M0 双目验证项对齐相机双轨决策（USB3 整模组并行首选 + VEYE MIPI plan B），新增 `docs/m0-setup.md` 物料与搭建入口。
 >
 > v0.2 变更：依据四方评审（架构/契约/硬件/选型）整改——新增 M0 技术验证 spike、P2 串行化拆分、SoC 冻结、出口标准补测量方法、人力预算显性化。
 
@@ -35,14 +37,14 @@ P0 生态重组
 
 ## M0 — 技术验证 spike（2026-10，P1 前置门槛）
 
-目标：用实测数据拍板剩余的技术风险。2026-09-17 架构调整后（batana-app 回 Flutter、batana-gui 收窄嵌入式），原 Qt6 移动端三项风险（iOS 合规、240fps、Qt BLE）已消除，M0 大幅瘦身：
+目标：用实测数据拍板剩余的技术风险。**物料清单与平台搭建步骤见 `docs/m0-setup.md`。** 2026-09-17 架构调整后（batana-app 回 Flutter、batana-gui 收窄嵌入式），原 Qt6 移动端三项风险（iOS 合规、240fps、Qt BLE）已消除，M0 大幅瘦身：
 
 | 验证项 | 方法 | 通过标准 | 降级预案 |
 |---|---|---|---|
 | RK3588 NPU 基准 | Radxa ROCK 5B+ 16GB（EVT 选定开发板）跑 BlazePose 级 TFLite→RKNN 模型 | 单帧 ≤ 20ms（INT8） | max 档延迟目标放宽或管线裁剪 |
 | Qt6 嵌入式构建链 | Yocto/meta-qt6 在 RK3588 开发板构建 batana-gui HelloWorld 并点亮屏幕 | 可复现构建 + eglfs 显示正常 | pi 显示改用 LVGL 轻量界面（功能裁剪） |
 | Flutter 高帧率采集 | batana-app 原型在 iOS/Android 真机 240fps 采集 | 稳定采集 10 分钟 | 降帧 120fps 并评估精度影响 |
-| 双目 120fps RAW 直通 | ROCK 5B+ 双 CSI 接双 OV9281（驱动需移植，BSP 6.1 + DT overlay，VICAP RAW 旁路 rkaiq；FSIN 经 40-pin PWM 飞线） | 双摄 120fps 稳定采集 30 分钟、帧配对误差 < 100µs | 降帧 60fps；AR0234 方案退回 OV9281 |
+| 双目 120fps 采集（双轨并行） | 路线 A：USB3 双目整模组（OV9281，免驱，基线可调 60–120mm）；路线 B：双 VEYE SC132M MIPI（BSP 树内驱动，FSIN 经 40-pin 飞线） | 双摄 120fps 稳定采集 30 分钟、帧配对误差 < 100µs；挥棒场景 3D 重建精度 ≤ 15mm@2.5m（两路线定案依据） | 降帧 60fps；单路线定案；两路线均失败退回 OAK-D-S2 |
 
 ## P1 — core 单目管线产品化（2026 Q4，约 12 人周）
 
