@@ -1,7 +1,7 @@
 # Batana 生态仓库清单与版本兼容矩阵（唯一权威登记处）
 # 维护规则：子仓发版 / 契约变更后必须更新本文件。详见 docs/versioning.md
 meta:
-  updated: "2026-09-18"
+  updated: "2026-09-19"
   schema: 1
 
 repos:

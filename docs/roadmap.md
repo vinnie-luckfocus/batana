@@ -1,6 +1,8 @@
 # Batana 生态路线图
 
-> 版本：v0.4（2026-09-18）· 粒度：阶段（Phase）→ 里程碑（M）· 进度跟踪以 `repos.yaml` 与各仓 GitHub Projects 为准
+> 版本：v0.5（2026-09-19）· 粒度：阶段（Phase）→ 里程碑（M）· 进度跟踪以 `repos.yaml` 与各仓 GitHub Projects 为准
+>
+> v0.5 变更：M0 新增 RK3576 降本线并行验证（泰山派3M）；拍摄环境要求入库（补光 ≥10,000 lux、路线 A 距离-精度冲突列为 EVT 第一实测项）。
 >
 > v0.4 变更：batana-pi 新增外观与外壳（ID/MD）工作线——EVT 原型定为开发板+相机模组+脚架/围栏挂钩（无正式外壳），外观 ID 与外壳工程在 DVT 冻结。
 >
@@ -47,6 +49,7 @@ P0 生态重组
 | Qt6 嵌入式构建链 | Yocto/meta-qt6 在 RK3588 开发板构建 batana-gui HelloWorld 并点亮屏幕 | 可复现构建 + eglfs 显示正常 | pi 显示改用 LVGL 轻量界面（功能裁剪） |
 | Flutter 高帧率采集 | batana-app 原型在 iOS/Android 真机 240fps 采集 | 稳定采集 10 分钟 | 降帧 120fps 并评估精度影响 |
 | 双目 120fps 采集（双轨并行） | 路线 A：USB3 双目整模组（OV9281，免驱，基线可调 60–120mm）；路线 B：双 VEYE SC132M MIPI（BSP 树内驱动，FSIN 经 40-pin 飞线） | 双摄 120fps 稳定采集 30 分钟、帧配对误差 < 100µs；挥棒场景 3D 重建精度 ≤ 15mm@2.5m（两路线定案依据） | 降帧 60fps；单路线定案；两路线均失败退回 OAK-D-S2 |
+| RK3576 降本线并行验证 | 泰山派3M（¥899）：USB 双目冒烟（含 IMOD/SUSPHY 调优）+ RKNN 基准 | ① 2560×800@120 MONO8 抓帧 10 分钟掉帧率 < 0.1%；② 姿态模型单帧 ≤ 20ms（INT8） | 不达标则 standard/pro 档保留 RK3588，降本线推迟；max 档基准板维持 RK3588 不变 |
 
 ## P1 — core 单目管线产品化（2026 Q4，约 12 人周）
 

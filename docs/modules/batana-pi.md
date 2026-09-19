@@ -14,6 +14,8 @@
   - 路线 B（MIPI 双模组，plan B）：VEYE RAW-MIPI-SC132M × 2（SC132GS mono，BSP 树内驱动免移植，RAW10 无损上限更高，≈¥1550–1650；清单见 `docs/research/2026-09-17-stereo-camera-bom.md`）
 - 软件降级预案（plan B）：若 RK3588 侧 OV9281 驱动移植或 RKNN 模型转换受阻，EVT 切换 **RPi5 8GB** + 2× Arducam B0224（直插双 CSI、FSIN 飞线）+ HDMI 触控屏 + Hailo-8L AI HAT+（13 TOPS）；代价：双摄后无 DSI、Hailo 与 NVMe 抢唯一 PCIe、存储退守 RAM 环形缓冲，总价 ~¥2800–3500（调研见 batana-pi `docs/research/2026-09-17-rpi5-eval.md`）
 - 显示：5–7" MIPI DSI 触控屏（与双摄 CSI 独立 PHY，并发无冲突，三平台均成立）
+- 降本线并行验证（2026-09-19 调研）：泰山派3M（RK3576，¥899）作 EVT 并行板，双验收项达标则 standard/pro 档切 RK3576（单板省 ¥400–900）；max 档基准仍锁 RK3588（见 batana-pi `docs/research/2026-09-19-rk3576-taishanpi-usb-stereo-eval.md`）
+- 拍摄环境规范（2026-09-19 调研）：正侧面机位、路线 B 甜点 2.5m（路线 A 距离-精度冲突列为 EVT 第一实测项）、曝光 ≤100µs、击球区补光 ≥10,000 lux 恒流无频闪、隔网拍摄镜头正对单网孔（见 batana-pi `docs/research/2026-09-19-stereo-shooting-environment.md`）
 - 采集服务：双目硬同步采集、ISP 调优、**标定数据生产与失效检测**（本仓是 calibration-data 契约 owner）
 - 边缘推理：部署 batana-runtime（**RKNN/NPU 后端，P3 引入**），运行 pro-stereo / max 管线；IMU 触发裁剪只分析挥棒段
 - 本地 UI：嵌入式 batana-gui（**Qt6/QML，嵌入式 Linux 构建**）
