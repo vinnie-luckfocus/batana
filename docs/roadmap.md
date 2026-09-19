@@ -1,6 +1,8 @@
 # Batana 生态路线图
 
-> 版本：v0.5（2026-09-19）· 粒度：阶段（Phase）→ 里程碑（M）· 进度跟踪以 `repos.yaml` 与各仓 GitHub Projects 为准
+> 版本：v0.6（2026-09-19，阶段门优化版）· 粒度：阶段（Phase）→ 里程碑（M）· 进度跟踪以 `repos.yaml` 与各仓 GitHub Projects 为准
+>
+> v0.6 变更：M0 改阶段门执行（G0 MacBook 先行冒烟 → G1 定案采购 → G2 收口），风险最高项用现有 MacBook 零成本先测；VEYE/泰山派改为 G1 触发式采购（全过则省 ¥2450–2550）；P1 的 M1.1 管线骨架与 M1.5 数据集采集前置，与 M0 并行。
 >
 > v0.5 变更：M0 新增 RK3576 降本线并行验证（泰山派3M）；拍摄环境要求入库（补光 ≥10,000 lux、路线 A 距离-精度冲突列为 EVT 第一实测项）。
 >
@@ -16,8 +18,8 @@
 2026 Q4          2027 Q1          2027 Q2          2027 Q3          2027 Q4
 ─────────────────────────────────────────────────────────────────────────────
 P0 生态重组
-   M0 技术验证 spike（RK3588 基准 / Qt6 嵌入式 / 240fps 采集）
-   P1 core 单目管线产品化
+   M0 技术验证 spike（阶段门：G0 MacBook 先行冒烟 → G1 定案采购 → G2 收口）
+   P1 core 单目管线产品化（M1.1 管线骨架 / M1.5 数据采集与 M0 并行前置）
                      P2a cap 固件 + BLE 协议（开发板）
                           P2b IMU 融合（core + gui）
                                         P3 pi 原型 + 双目 max
@@ -41,25 +43,43 @@ P0 生态重组
 
 ## M0 — 技术验证 spike（2026-10，P1 前置门槛）
 
-目标：用实测数据拍板剩余的技术风险。**物料清单与平台搭建步骤见 `docs/m0-setup.md`。** 2026-09-17 架构调整后（batana-app 回 Flutter、batana-gui 收窄嵌入式），原 Qt6 移动端三项风险（iOS 合规、240fps、Qt BLE）已消除，M0 大幅瘦身：
+目标：用实测数据拍板剩余的技术风险。**阶段门原则（v0.6）：最便宜、最高风险的项先测，后续采购由前一道门的结论触发**——路线 A 模组到货即插现有 MacBook 冒烟（UVC 免驱，零新增硬件成本）；VEYE（¥1550–1650）与泰山派3M（¥899）推迟到 G1 定案后按需下单。物料清单与平台搭建步骤见 `docs/m0-setup.md`。
 
-| 验证项 | 方法 | 通过标准 | 降级预案 |
+### G0（D1–D7）：MacBook 先行冒烟 + 首笔硬件到货
+
+| 验证项 | 方法 | 通过标准 | 失败动作 |
 |---|---|---|---|
-| RK3588 NPU 基准 | Radxa ROCK 5B+ 16GB（EVT 选定开发板）跑 BlazePose 级 TFLite→RKNN 模型 | 单帧 ≤ 20ms（INT8） | max 档延迟目标放宽或管线裁剪 |
-| Qt6 嵌入式构建链 | Yocto/meta-qt6 在 RK3588 开发板构建 batana-gui HelloWorld 并点亮屏幕 | 可复现构建 + eglfs 显示正常 | pi 显示改用 LVGL 轻量界面（功能裁剪） |
-| Flutter 高帧率采集 | batana-app 原型在 iOS/Android 真机 240fps 采集 | 稳定采集 10 分钟 | 降帧 120fps 并评估精度影响 |
-| 双目 120fps 采集（双轨并行） | 路线 A：USB3 双目整模组（OV9281，免驱，基线可调 60–120mm）；路线 B：双 VEYE SC132M MIPI（BSP 树内驱动，FSIN 经 40-pin 飞线） | 双摄 120fps 稳定采集 30 分钟、帧配对误差 < 100µs；挥棒场景 3D 重建精度 ≤ 15mm@2.5m（两路线定案依据） | 降帧 60fps；单路线定案；两路线均失败退回 OAK-D-S2 |
-| RK3576 降本线并行验证 | 泰山派3M（¥899）：USB 双目冒烟（含 IMOD/SUSPHY 调优）+ RKNN 基准 | ① 2560×800@120 MONO8 抓帧 10 分钟掉帧率 < 0.1%；② 姿态模型单帧 ≤ 20ms（INT8） | 不达标则 standard/pro 档保留 RK3588，降本线推迟；max 档基准板维持 RK3588 不变 |
+| V0a 路线 A 规格实测 | 模组到货即插 MacBook（ffmpeg avfoundation 探测）：实际 FOV、640×400 binning vs 裁剪、120fps 无压缩枚举 | FOV ≥ 66° 且 binning 保 FOV → 2.5m 全身成立 | 路线 A 降级为挥棒核心段/standard 档；G1 触发 VEYE 采购 |
+| V0b UVC 120fps 冒烟（macOS） | 抓帧计数 10 分钟 | 掉帧率 < 0.1% | 换 YUY2 取 Y 通道 / 降 100fps，记录平台风险 |
+| V0c 标定链路 + 精度初测 | MacBook + A0 标定板 + 补光，首套双目标定与 3D 重建 | ≤ 15mm@2m | G1 触发 VEYE 采购 |
+| V1 RK3588 NPU 基准 | ROCK 5B+ 16GB 到货后跑 BlazePose 级 TFLite→RKNN | 单帧 ≤ 20ms（INT8） | max 档延迟目标放宽或管线裁剪 |
+
+### G1（D8–D14）：定案采购 + 目标平台复测
+
+- **定案**：V0a–V0c 全过 → **VEYE 不下单**（省 ¥1550–1650；路线 B 转储备，max 档精度上限风险记录在案）；任一不过 → VEYE 下单走路线 B 排线核对上电
+- **降本线**：V1 过 → 泰山派3M 下单；不过 → 降本线推迟，standard/pro 档保留 RK3588
+- V4 平台复测：路线 A 在 ROCK 5B+ 上复测 UVC 120fps 长时 + PTS 抖动（≤ 2ms）
+- V3 Flutter 高帧率采集：batana-app 原型在 iOS/Android 真机 240fps，稳定 10 分钟；不达则降帧 120fps 并评估精度影响
+
+### G2（D15–D21）：收口验收
+
+| 验证项 | 通过标准 | 降级预案 |
+|---|---|---|
+| V4 双目收口 | 120fps 稳定 30 分钟、帧配对误差 < 100µs、3D 重建 ≤ 15mm@2.5m（路线定案） | 降帧 60fps；两路线均失败退回 OAK-D-S2 |
+| V2 Qt6 嵌入式构建链 | Yocto/meta-qt6 可复现构建 + eglfs 点亮 Display 8 HD | pi 显示改用 LVGL 轻量界面（功能裁剪） |
+| V5 泰山派双验收（若 G1 下单） | ① 2560×800@120 MONO8 10 分钟掉帧 < 0.1%（含 IMOD/SUSPHY 调优）；② 姿态模型 ≤ 20ms INT8 | 降本线推迟，主线不受影响 |
+
+出口：全部验证项通过或降级预案生效 → P1 全面铺开（M1.1/M1.5 已并行，见下）。
 
 ## P1 — core 单目管线产品化（2026 Q4，约 12 人周）
 
 目标：在 batana-core 中从头实现单目分析管线（旧 Flutter MVP 仅作算法参考），实现 **standard-vision** 档。
 
-- M1.1 batana-core v0.1：Python 侧管线骨架 + session-schema v1 + 规则评分引擎；**MediaPipe 仅作关键点拓扑规范来源与对照工具，生产管线跑自训练/导出的 TFLite 模型**
+- M1.1 batana-core v0.1：Python 侧管线骨架 + session-schema v1 + 规则评分引擎；**MediaPipe 仅作关键点拓扑规范来源与对照工具，生产管线跑自训练/导出的 TFLite 模型**。**前置（v0.6）**：管线骨架与标定/3D 工具自 M0 G0 起在 MacBook 上用路线 A 实拍流并行开发，不等 runtime
 - M1.2 batana-runtime v0.1：C++ 推理运行时，**唯一跨平台后端 TFLite（+delegates）**，稳定 C API（runtime-api 契约 v1）；导出链数值一致性测试（PyTorch vs TFLite）
 - M1.3 batana-app v0.1：Flutter 应用骨架，dart:ffi 接入 runtime 走通"录制→分析→评分→展示"；**出口平台 macOS + Android**
 - M1.4 iOS/Windows 端打通 + 四平台 runtime 打包 CI
-- M1.5 数据集里程碑 v1：≥ 200 段标注挥棒视频（含借用雷达枪/高速摄影采集棒速真值子集 ≥ 50 段）
+- M1.5 数据集里程碑 v1：≥ 200 段标注挥棒视频（含借用雷达枪/高速摄影采集棒速真值子集 ≥ 50 段）。**前置（v0.6）**：采集自 M0 G1 起启动（MacBook + 路线 A 模组 + 补光 + Tee 移动采集站）
 - 出口标准（macOS+Android 双端）：全链路走 runtime；分析完成率 ≥ 85%（以 M1.5 数据集回放为分母，"完成"=出分且无崩溃）；单次分析 ≤ 15s（计时起点=录制结束，终点=评分页渲染完成，不含上传）
 
 ## P2a — batana-cap 固件与 BLE 协议（2027 Q1，约 8 人周）
@@ -108,7 +128,9 @@ P0 生态重组
 
 | 风险 | 影响 | 缓解 |
 |---|---|---|
-| Flutter 高帧率采集不达 240fps | standard 档精度受限 | M0 真机验证；降级 120fps 并评估精度影响 |
+| 路线 A FOV/binning 悬案致距离-精度不可兼得 | max 档定案 | G0 第一项实测（MacBook 零成本）；不达标则 2m 核心段或 G1 触发 VEYE |
+| 击球区照度不足（笼灯 300–500 lux vs 需求 ≥10,000 lux） | V4 画质/精度、数据集质量 | 补光灯+照度计已列 M0 物料；白墙频闪测试帧间波动 < 2% 验收 |
+| Flutter 高帧率采集不达 240fps | standard 档精度受限 | M0 G1 真机验证；降级 120fps 并评估精度影响 |
 | RK3588 NPU 性能不足 8s 预算 | P3 出口失败 | M0 基准实测 + IMU 触发裁剪 + tracker ROI；仍不足则放宽目标或降分辨率 |
 | IMU 量程饱和 | IMU 档全部失效 | 已整改：选型 LSM6DSO32X（±32g/±4000dps）；DVT 评估是否加高 g 加速度计 |
 | 时钟漂移破坏融合 | pro/max 精度失效 | 已整改：ble-protocol 时钟同步命令 0x05 + clock_anchor 契约字段，M2a.2 实测验收 |

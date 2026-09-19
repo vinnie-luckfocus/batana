@@ -104,7 +104,7 @@ batana（本仓库）是 **Batana 生态的司令塔（meta 仓库）**，不含
 ## Current Focus
 
 当前重点：**P0 已完成（契约 1.0 定稿）→ M0 技术验证 spike → P1 core 单目管线产品化**
-- M0（P1 前置门槛）：RK3588 NPU 基准、Qt6 嵌入式构建链、Flutter 240fps 真机采集、双目 120fps 双轨——任一不通过则启动降级预案（见 roadmap）；**物料清单与搭建步骤：`docs/m0-setup.md`**
+- M0（P1 前置门槛）：阶段门 G0（MacBook 先行冒烟）→ G1（定案采购）→ G2（收口），任一不通过则启动降级预案（见 roadmap v0.6）；**物料清单与搭建步骤：`docs/m0-setup.md`**
 - P1 目标：batana-runtime v0.1（TFLite 唯一后端 + 稳定 C API）+ batana-app(Flutter) 骨架，macOS+Android 走通 standard-vision 全链路
 
 ## 核心原则
