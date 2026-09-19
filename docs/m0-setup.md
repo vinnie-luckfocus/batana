@@ -105,11 +105,12 @@
 
 ## 3. 软件与账号平台搭建（零采购）
 
-### 3.1 macOS 开发机（V1 模型转换 + V3 构建）
+### 3.1 macOS 开发机（V1 模型转换 + V3 构建 + core 调试主机）
 
 - Flutter stable + `flutter doctor` 全绿；Xcode（免费 Personal Team 即可真机调试）；Android Studio（SDK 34+、NDK）
-- Python 3.11 venv：`rknn-toolkit2`（TFLite→RKNN 转换在主机侧完成）
+- Python 3.11 venv：`rknn-toolkit2`（TFLite→RKNN 转换在主机侧完成；**macOS arm64 wheel 支持待验证，属风险 R3**）
 - CMake、Git（已有 gh 认证）
+- **USB 双目模组可直插 MacBook**（Type-C，UVC 免驱）作 batana-core 算法调试 + 移动数据采集站（标定工具、3D 重建、M1.5 数据集录像落盘）；注意 macOS UVC 对 MONO8 枚举不稳定，先探测格式，兜底 YUY2 取 Y 通道；**性能验收（帧配对/PTS/长时掉帧）必须在 RK3588/泰山派目标平台做**
 
 ### 3.2 ROCK 5B+ 首次点亮（V1）
 
