@@ -54,8 +54,8 @@ repos:
     role: batana-core 素材采集与标注工具（macOS 桌面，双目采集 + 语音引导 + 骨架标注）
     url: https://github.com/vinnie-luckfocus/batana-tool
     version: null
-    status: planning
-    progress: 5
+    status: active
+    progress: 30
     sync_with: batana-core   # 硬同步约束：core 的契约/模型升级时 tool 必须同步升级，combo 绑定验证（见 versioning.md §4）
 
 contracts:
