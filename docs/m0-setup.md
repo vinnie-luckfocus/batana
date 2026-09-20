@@ -6,6 +6,8 @@
 
 ## 1. M0 验证项 → 物料映射
 
+> **G0 前置状态（2026-09-20）**：硬件到货前的软件前置已全部完成——UVC 冒烟探针与 RKNN 基准脚本（batana-pi `spikes/`）、双目标定与 3D 重建工具链（batana-core `tools/`，合成数据端到端 35 项测试全绿，2m 重建误差实测 ~3mm，对 V0c 的 15mm 标准余量 >2×）、Flutter 240fps 探针 app（batana-app `spikes/hfr_probe/`，本机 5 项测试全绿）、Qt6 eglfs 应用骨架与 Yocto 层（batana-gui + batana-pi `firmware/yocto/`）。风险 R3 已关闭：rknn-toolkit2 **无 macOS arm64 wheel**（仅 x86_64 Linux），TFLite→RKNN 转换须在 Linux 环境进行。其余项待硬件到货执行。
+
 | # | 验证项 | 通过标准 | 所需物料 | 物料章节 |
 |---|---|---|---|---|
 | V1 | RK3588 NPU 基准（BlazePose 级 TFLite→RKNN） | 单帧 ≤ 20ms（INT8） | ROCK 5B+ 套装 | A |
