@@ -55,8 +55,8 @@ repos:
     url: https://github.com/vinnie-luckfocus/batana-tool
     version: null
     status: active
-    progress: 30
     sync_with: batana-core   # 硬同步约束：core 的契约/模型升级时 tool 必须同步升级，combo 绑定验证（见 versioning.md §4）
+    progress: 40
 
 contracts:
   # 版本写法：草案期 1.0-draft，固化后 1.0（详见 docs/versioning.md）
