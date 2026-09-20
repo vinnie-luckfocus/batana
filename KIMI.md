@@ -1,4 +1,4 @@
-# CLAUDE.md
+# KIMI.md
 
 > Think carefully and implement the most concise solution that changes as little code as possible.
 
@@ -81,6 +81,7 @@ batana（本仓库）是 **Batana 生态的司令塔（meta 仓库）**，不含
 - 子仓库发版 / 契约变更后必须更新 `repos.yaml`
 - 文档修订需更新文件头部的版本与日期
 - 子模块指针只在 combo 兼容验证后前进
+- **core↔tool 硬同步（2026-09-20 决策）**：batana-core 的 session-schema / capabilities / 模型工件（`models/registry.yaml`）有任何升级改动，batana-tool 必须同步升级并验证"tool 产出的素材 core 完美可用"（tool 导出须通过 core `tools/validate_session.py` 全量校验 + core 管线回放通过）；两者在 combo 中绑定验证，不得单独前进
 
 ### 文档规范
 - 单个文件不超过 800 行

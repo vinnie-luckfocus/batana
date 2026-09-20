@@ -45,6 +45,7 @@ batana-core/
 - 定义：session-schema、capabilities、**runtime-api**（`batana_runtime.h`，ABI 主版本管理）
 - 消费：device-interfaces / calibration-data（batana-pi 定义）
 - runtime-api 形态：`batana_runtime_create(config) → session_analyze(input) → SessionResult`
+- **硬同步义务**：session-schema / capabilities / 模型工件升级时，**batana-tool 必须同批升级**（验收 = tool 导出过 validate_session.py 全量校验 + 管线回放通过；见司令塔 versioning.md §4）
 
 ## 里程碑映射
 

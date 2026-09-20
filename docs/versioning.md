@@ -1,6 +1,8 @@
 # 版本与兼容性管理
 
-> 版本：v0.2（2026-09-17，评审整改版）
+> 版本：v0.3（2026-09-20）
+>
+> v0.3 变更：新增 core↔tool 硬同步规则（§4）；登记 batana-tool 为 session-schema / capabilities 消费方。
 
 ## 1. 版本号体系
 
@@ -35,6 +37,7 @@
 ## 4. 兼容规则
 
 - 契约**主版本不变则向后兼容**；破坏式变更必须升主版本并保留旧版本至少一个 combo 周期。
+- **core↔tool 硬同步（2026-09-20 决策）**：batana-core 的 session-schema / capabilities / 模型工件（`models/registry.yaml`）任何升级改动，batana-tool 必须同批升级；验收标准 = tool 导出素材通过 core `tools/validate_session.py` 全量校验 + core 管线回放通过。combo 中两者版本绑定，不得单独前进（repos.yaml 中 batana-tool 标 `sync_with: batana-core`）。
 - runtime 与模型工件：runtime 声明支持的 `model@major` 范围，加载时校验；`runtime-api` 的 C API 按 ABI 主版本管理。
 - BLE 协议：连接后 Central 先读协议版本特征（0x0303），主版本不兼容则拒绝并提示升级；任一方升级不得破坏已发布 combo 的连接。
 

@@ -40,6 +40,7 @@ batana-tool/
 
 - 消费：**session-schema**（导出格式对齐，owner: batana-core）、**capabilities**（pose2d 拓扑与关键点顺序约定）
 - 集成：复用 batana-core `tools/calibration` 标定结果（calibration JSON 导入，3D 质量预览）
+- **硬同步义务（2026-09-20 决策）**：batana-core 的契约/模型工件有任何升级，本仓必须同批升级，保证"tool 产出的素材 core 完美使用"（验收 = 导出过 core `validate_session.py` 全量校验 + core 管线回放通过；combo 绑定，见司令塔 versioning.md §4）
 
 ## 里程碑映射
 

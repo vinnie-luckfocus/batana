@@ -56,11 +56,12 @@ repos:
     version: null
     status: planning
     progress: 5
+    sync_with: batana-core   # 硬同步约束：core 的契约/模型升级时 tool 必须同步升级，combo 绑定验证（见 versioning.md §4）
 
 contracts:
   # 版本写法：草案期 1.0-draft，固化后 1.0（详见 docs/versioning.md）
-  session-schema:    { version: "1.0", owner: batana-core, consumers: [batana-app, batana-gui, batana-pi, batana-web] }
-  capabilities:      { version: "1.0", owner: batana-core, consumers: [batana-app, batana-gui, batana-web] }
+  session-schema:    { version: "1.0", owner: batana-core, consumers: [batana-app, batana-gui, batana-pi, batana-web, batana-tool] }
+  capabilities:      { version: "1.0", owner: batana-core, consumers: [batana-app, batana-gui, batana-web, batana-tool] }
   ble-protocol:      { version: "1.0", owner: batana-cap,  consumers: [batana-app, batana-pi] }
   sync-api:          { version: "1.0", owner: batana-web,  consumers: [batana-app, batana-pi] }
   runtime-api:       { version: planned, owner: batana-core, consumers: [batana-app, batana-gui, batana-pi] }   # P1 随 runtime v0.1 落地
