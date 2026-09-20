@@ -25,6 +25,7 @@ batana（本仓库）是 **Batana 生态的司令塔（meta 仓库）**，不含
 | batana-pi | 双目边缘计算设备 | Linux (RK3588) / C++ / Python |
 | batana-cap | 棒尾 IMU 传感器 | Zephyr RTOS / C |
 | batana-web | Web 管理平台（统计/趋势/数仓） | Next.js / Postgres |
+| batana-tool | batana-core 素材采集与标注工具（macOS） | PySide6 / OpenCV / MediaPipe |
 
 各模块功能与边界：`docs/modules/<repo>.md`。**跨仓库改动必须先查契约归属表**（见 architecture.md 第 4 节）。
 

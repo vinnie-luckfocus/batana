@@ -50,6 +50,12 @@ repos:
     status: planning
     progress: 0
     defines_contracts: [sync-api]
+  batana-tool:
+    role: batana-core 素材采集与标注工具（macOS 桌面，双目采集 + 语音引导 + 骨架标注）
+    url: https://github.com/vinnie-luckfocus/batana-tool
+    version: null
+    status: planning
+    progress: 5
 
 contracts:
   # 版本写法：草案期 1.0-draft，固化后 1.0（详见 docs/versioning.md）

@@ -22,3 +22,6 @@
 	path = projects/app
 	url = ../batana-app
 	branch = main
+[submodule "projects/tool"]
+	path = projects/tool
+	url = ../batana-tool
