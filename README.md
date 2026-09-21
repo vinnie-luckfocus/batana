@@ -26,7 +26,7 @@
 - 模型能力分级（max / pro / standard）：[docs/model-tiers.md](docs/model-tiers.md)
 - 生态路线图：[docs/roadmap.md](docs/roadmap.md)
 - 软硬件版本与兼容矩阵：[repos.yaml](repos.yaml) · [docs/versioning.md](docs/versioning.md)
-- 项目进度与素材资料：`.claude/`（CCPM 体系）· `docs/assets/`
+- 项目进度与素材资料：[docs/roadmap.md](docs/roadmap.md) · [repos.yaml](repos.yaml) · `docs/assets/`
 - 各子仓库以 git submodule 挂载于 `projects/`，锁定到经兼容验证的版本
 
 本仓库**不含产品代码**。旧 Flutter MVP 方案已于 2026-09-17 放弃，代码留存于 tag `archive/flutter-mvp` 仅作参考。
@@ -35,12 +35,13 @@
 
 | 仓库 | 职责 | 技术栈 | 状态 |
 |---|---|---|---|
-| [batana-core](https://github.com/vinnie-luckfocus/batana-core) | 模型系统核心：管线 / 算子 / 推理运行时 / 训练 | Python + C++17 | planning |
+| [batana-core](https://github.com/vinnie-luckfocus/batana-core) | 模型系统核心：管线 / 算子 / 推理运行时 / 训练 | Python + C++17 | active |
 | [batana-app](https://github.com/vinnie-luckfocus/batana-app) | 跨平台移动/桌面应用：iOS / Android / macOS / Windows | Flutter | planning |
 | [batana-gui](https://github.com/vinnie-luckfocus/batana-gui) | 嵌入式 GUI：batana-pi 显示屏本地界面 | Qt6（C++/QML） | planning |
-| [batana-pi](https://github.com/vinnie-luckfocus/batana-pi) | 双目边缘计算设备（双目相机 + 边缘盒 + 显示屏） | Linux (RK3588) / C++ / Python | planning |
+| [batana-pi](https://github.com/vinnie-luckfocus/batana-pi) | 双目边缘计算设备（双目相机 + 边缘盒 + 显示屏） | Linux (RK3588) / C++ / Python | active |
 | [batana-cap](https://github.com/vinnie-luckfocus/batana-cap) | 棒尾 IMU 传感器（陀螺仪/加速度计 + 圆屏） | Zephyr RTOS / C | planning |
 | [batana-web](https://github.com/vinnie-luckfocus/batana-web) | Web 管理平台：数据统计 / 趋势 / 多用户数仓 | Next.js / Postgres | planning |
+| [batana-tool](https://github.com/vinnie-luckfocus/batana-tool) | batana-core 素材采集与标注工具（macOS 桌面） | PySide6 / OpenCV / MediaPipe | active |
 
 各模块功能与边界详见 [docs/modules/](docs/modules/)。
 
@@ -71,7 +72,8 @@ git submodule update --remote --merge
 
 ## 路线图
 
-- **P0 生态重组**（2026-09）：仓库拆分、契约 v1-draft、司令塔转型 —— 进行中
+- **P0 生态重组**（2026-09）：仓库拆分、契约 1.0 定稿、司令塔转型 —— 已完成
+- **M0 技术验证**（2026-09 起，阶段门 G0 → G1 → G2）：相机/算力/构建环境风险实测，物料与步骤见 [docs/m0-setup.md](docs/m0-setup.md) —— 进行中
 - **P1 core 单目管线**（2026 Q4）：standard-vision，batana-runtime v0.1 + batana-app(Flutter) 骨架
 - **P2 cap 原型与 IMU 融合**（2027 Q1）：standard-imu / pro-fusion
 - **P3 pi 原型与双目 max**（2027 Q2）：pro-stereo / max

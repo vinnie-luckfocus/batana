@@ -1,16 +1,14 @@
 # KIMI.md
 
-> Think carefully and implement the most concise solution that changes as little code as possible.
+> 本文件是 Kimi Code 在本仓库的工作约定。本项目所有对话、文档、代码注释均使用中文！
 
-## 本项目所有对话、文档、代码注释均使用中文!
-
-## Project Overview
+## 项目概述
 
 batana（本仓库）是 **Batana 生态的司令塔（meta 仓库）**，不含产品代码。职责：
 
 - 产品功能定义与总体架构（`docs/architecture.md`）
 - 模型能力分级 max / pro / standard（`docs/model-tiers.md`）
-- 路线图与项目进度（`docs/roadmap.md`、`.claude/` CCPM 体系）
+- 路线图与项目进度（`docs/roadmap.md`、`repos.yaml`）
 - 软硬件版本与兼容矩阵（`repos.yaml`、`docs/versioning.md`）
 - 素材资料与品牌资产（`assets/logo.png`、`docs/assets/`）
 - 子仓库以 git submodule 挂载于 `projects/`，锁定到兼容验证过的版本
@@ -33,47 +31,12 @@ batana（本仓库）是 **Batana 生态的司令塔（meta 仓库）**，不含
 
 - 2026-09-17：旧 Flutter MVP 方案彻底放弃，代码留存 tag `archive/flutter-mvp` 仅作参考。
 - 2026-09-17：界面层拆分——batana-app（Flutter，iOS/Android/macOS/Windows）+ batana-gui（Qt6 嵌入式，仅 batana-pi 显示屏）。注意：app 虽用 Flutter 但全新实现，不复用旧 MVP 代码。
+- 2026-09-21：弃用 CCPM（Claude Code PM）体系，移除 `.claude/`；项目管理以 roadmap + repos.yaml + 各仓 GitHub Issues 为准。
 
-## Project Management Workflow
-
-本项目使用 CCPM (Claude Code Project Management) 系统管理开发流程。跨仓库 Epic 在司令塔立项，任务落到对应子仓库的 GitHub Issues。
-
-### 核心命令
-```bash
-# PRD 管理
-/pm:prd-new <feature>        # 创建产品需求文档
-/pm:prd-parse <feature>      # 将 PRD 转换为技术 Epic
-
-# Epic 管理
-/pm:epic-decompose <epic>    # 将 Epic 拆解为具体任务
-/pm:epic-sync <epic>         # 同步 Epic 到 GitHub
-/pm:epic-start <epic>        # 开始 Epic 开发（创建分支）
-
-# Issue 管理
-/pm:issue-start <number>     # 开始任务开发
-/pm:issue-sync <number>      # 同步任务进度到 GitHub
-/pm:issue-close <number>     # 完成任务
-
-# 状态查看
-/pm:status                   # 查看项目整体状态
-/pm:next                     # 查看下一个待处理任务
-```
-
-### 目录结构
-```
-.claude/
-├── prds/              # 产品需求文档
-├── epics/             # 技术实施 Epic
-├── rules/             # 项目规则与标准
-├── agents/            # 专用 Agent 定义
-├── commands/          # PM 命令实现
-└── context/           # 项目上下文
-```
-
-## Development Guidelines
+## 开发规范
 
 ### 语言要求
-- 所有对话、文档、代码注释均使用中文
+- 所有对话、文档、代码注释、commit message 均使用中文
 - 变量名、函数名使用英文（遵循各语言规范）
 
 ### 司令塔仓库规则
@@ -83,31 +46,42 @@ batana（本仓库）是 **Batana 生态的司令塔（meta 仓库）**，不含
 - 子模块指针只在 combo 兼容验证后前进
 - **core↔tool 硬同步（2026-09-20 决策）**：batana-core 的 session-schema / capabilities / 模型工件（`models/registry.yaml`）有任何升级改动，batana-tool 必须同步升级并验证"tool 产出的素材 core 完美可用"（tool 导出须通过 core `tools/validate_session.py` 全量校验 + core 管线回放通过）；两者在 combo 中绑定验证，不得单独前进
 
+### Git 协作约定
+- commit 使用中文 conventional commit（如 `feat:` / `fix:` / `docs:` / `chore:`）
+- 本机代理 127.0.0.1:7897 常失效，git 网络操作统一绕过：
+  `git -c http.proxy= -c https.proxy= push`（clone/pull/submodule 同理）
+- 子仓改动后的司令塔同步流程：子仓 commit+push → `git -C projects/<名> pull --ff-only`（带代理绕过参数）→ add 子模块指针 + 同步 repos.yaml/相关文档 → 司令塔 commit+push
+
 ### 文档规范
 - 单个文件不超过 800 行
 - 模块文档固定结构：定位 / 功能清单 / 边界（做与不做）/ 技术栈与结构 / 对外契约 / 里程碑映射
 
-## Key Rules
+## 当前状态（2026-09-21）
 
-项目规则汇总于 [`.claude/CLAUDE.md`](.claude/CLAUDE.md)，包含以下核心规范：
+**P0 已完成（契约 1.0 定稿）→ M0 技术验证 spike 进行中（阶段门 G0 → G1 → G2，见 roadmap v0.6）**
 
-- `datetime.md`: 时间戳格式规范
-- `frontmatter-operations.md`: 文档元数据操作
-- `github-operations.md`: GitHub 集成规范
-- `standard-patterns.md`: 通用开发模式
-- `agent-coordination.md`: 多 Agent 协作规则
-- `path-standards.md`: 路径规范（隐私保护）
-- `strip-frontmatter.md`: 去除 Frontmatter
-- `test-execution.md`: 测试执行规范
-- `branch-operations.md`: 分支操作
-- `worktree-operations.md`: Worktree 操作
-- `use-ast-grep.md`: AST-Grep 集成协议
+各仓实况：
 
-## Current Focus
+| 仓库 | 状态 | 说明 |
+|---|---|---|
+| batana-tool | active，v0.4.2（306b4d0） | 采集/检测/导出/标注/环境自检全链路完成，128 项测试全绿；macOS 原生风 UI（NSVisualEffectView 毛玻璃）三轮改版完成 |
+| batana-core | active（b68044a） | 契约 session-schema / capabilities 1.0 定稿；标定与 3D 工具链 + 管线骨架 + 合成数据端到端验证，35 项测试全绿 |
+| batana-pi | active（f976b27） | M0 G0 验证工具链就绪：UVC 冒烟探针 / RKNN 基准 / Yocto 层骨架；EVT 选型 ROCK 5B+ 16GB，相机路线 A（USB3 整模组）优先 |
+| batana-app | planning（2811fa5） | Flutter 骨架 + M0-V3 高帧率采集探针（平台通道直连 AVFoundation/Camera2） |
+| batana-gui | planning（dc51885） | Qt6/QML 嵌入式 HelloWorld 骨架（eglfs 验证用） |
+| batana-cap | planning（bd23cda） | ble-protocol 1.0 定稿，无代码 |
+| batana-web | planning（772ac21） | sync-api 1.0 定稿，无代码 |
 
-当前重点：**P0 已完成（契约 1.0 定稿）→ M0 技术验证 spike → P1 core 单目管线产品化**
-- M0（P1 前置门槛）：阶段门 G0（MacBook 先行冒烟）→ G1（定案采购）→ G2（收口），任一不通过则启动降级预案（见 roadmap v0.6）；**物料清单与搭建步骤：`docs/m0-setup.md`**
-- P1 目标：batana-runtime v0.1（TFLite 唯一后端 + 稳定 C API）+ batana-app(Flutter) 骨架，macOS+Android 走通 standard-vision 全链路
+已验证的跨仓配合：
+
+- **core↔tool 硬同步实测通过（2026-09-21）**：tool 全管线产出的 session 经 core `tools/validate_session.py` 全量校验通过
+- 契约矩阵见 `repos.yaml`：session-schema / capabilities / ble-protocol / sync-api 均 1.0 稳定；device-interfaces 1.0-draft；runtime-api 待 P1
+
+待办与阻塞：
+
+- M0 G0 硬件验证等物料到货（路线 A USB3 双目模组、ROCK 5B+）：V0a FOV/binning 实测、V0b UVC 120fps 冒烟、V0c 标定初测、V1 NPU 基准——工具链均已就绪
+- R2/R3：RKNN 转换与 Yocto 构建需 Linux 环境（OrbStack / UTM / 云主机），**用户尚未选定**
+- V3：用户手机是否支持 1080p240 未确认
 
 ## 核心原则
 
