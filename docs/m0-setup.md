@@ -48,6 +48,12 @@
 - 下单前向客服确认：① 640×400 模式是 2×2 binning（保 FOV）还是中心裁剪（FOV 减半则覆盖不足）；② 是否可定制 2560×800@120 固件
 - 定位：路线 A 的快速验证样品；120fps 全分辨率上限仍由路线 B（VEYE 1280×1080@120 RAW）兜底，双轨策略不受影响
 
+**到货首测（2026-09-21，MacBook）：通过 ✅**——详细报告见 batana-pi `docs/research/2026-09-21-camera-macos-driver-verification.md`：
+
+- 免驱识别 ✅、USB3 5Gbps 链路 ✅、描述符直读核实全部宣传档位属实（MJPEG/YUY2 均有 1280×400@120 与 2560×720@60）✅、SBS 真双目 ✅
+- ⚠️ macOS AVFoundation 上限 75fps 且不暴露 MJPEG；OpenCV 协商会静默回退 720p30——batana-tool 已落地 ffmpeg 后端解决（实采 1280×400 MONO8 ~75fps）
+- 120fps 满速与 FOV/binning 实测移交 ROCK 5B+（v4l2，V4/V0a 项）
+
 ### C. 相机路线 B — VEYE MIPI 双模组（G1 触发采购）
 
 **v1.1 起改为 G1 触发式下单**：仅当 G0 路线 A 三项实测（FOV/binning、UVC 冒烟、精度初测）任一不过时采购；路线 A 全过则本路线转储备，零支出。
@@ -178,7 +184,7 @@
 | R1 | 现有手机不支持 1080p240 高速采集 | V3 | 中 | D0 确认型号；不支持则借测或购二手 iPhone 12+（~¥1500–2500） | ⚠️ 需用户确认 |
 | R2 | macOS 不能原生构建 Yocto | V2 | 高（确定） | Linux 环境三选一（3.3），D0 定方案；推荐 OrbStack 容器先试 | ⚠️ 需用户定夺 |
 | R3 | rknn-toolkit2 对 macOS arm64 支持不确定 | V1 转换环节 | 中 | 转换挪到 R2 的 Linux 环境，或板端 toolkit2-lite | 已备后路 |
-| R4 | 白牌 USB 模组规格不透明（MJPEG-only / 固定 60mm） | V4 路线 A | 中 | 2–3 家样品 + 采购前书面确认三点；兜底 OAK-D-S2 | 已缓解 |
+| R4 | 白牌 USB 模组规格不透明（MJPEG-only / 固定 60mm） | V4 路线 A | 中 | 2–3 家样品 + 采购前书面确认三点；兜底 OAK-D-S2 | 已关闭（2026-09-21 描述符直读核实档位属实） |
 | R5 | VEYE 排线 pinout 错接烧板 | V4 路线 B | 低 | 万用表首件逐脚核对（工具已列 E） | 已缓解 |
 | R6 | 供货周期 | 全部 | 低 | 全部国内现货 1–3 天 | 无阻断 |
 | R7 | BLE 天线遗漏导致 cap 联调失败 | 后续 P3 | — | 已列入 A 项 | 已闭环 |

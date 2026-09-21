@@ -54,6 +54,8 @@ P0 生态重组
 | V0c 标定链路 + 精度初测 | MacBook + A0 标定板 + 补光，首套双目标定与 3D 重建 | ≤ 15mm@2m | G1 触发 VEYE 采购 |
 | V1 RK3588 NPU 基准 | ROCK 5B+ 16GB 到货后跑 BlazePose 级 TFLite→RKNN | 单帧 ≤ 20ms（INT8） | max 档延迟目标放宽或管线裁剪 |
 
+**G0 进度（2026-09-21）**：相机到货并完成 MacBook 首测——V0b macOS 侧结论已出（AVFoundation 上限 75fps、OpenCV 协商回退问题已由 batana-tool ffmpeg 后端解决；120fps 满速移交 V4 目标平台复测）；V0a 档位/格式核实完毕，FOV/binning 实测量角与 V0c（标定板）待做；V1 待 ROCK 5B+ 到货。
+
 ### G1（D8–D14）：定案采购 + 目标平台复测
 
 - **定案**：V0a–V0c 全过 → **VEYE 不下单**（省 ¥1550–1650；路线 B 转储备，max 档精度上限风险记录在案）；任一不过 → VEYE 下单走路线 B 排线核对上电

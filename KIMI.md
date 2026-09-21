@@ -64,9 +64,9 @@ batana（本仓库）是 **Batana 生态的司令塔（meta 仓库）**，不含
 
 | 仓库 | 状态 | 说明 |
 |---|---|---|
-| batana-tool | active，v0.4.2（306b4d0） | 采集/检测/导出/标注/环境自检全链路完成，128 项测试全绿；macOS 原生风 UI（NSVisualEffectView 毛玻璃）三轮改版完成 |
+| batana-tool | active，v0.4.2+（b954bff） | 采集/检测/导出/标注/环境自检全链路完成，134 项测试全绿；macOS 原生风 UI（NSVisualEffectView 毛玻璃）三轮改版完成；新增 ffmpeg AVFoundation 帧源，实机相机直达 1280x400 MONO8 ~75fps |
 | batana-core | active（b68044a） | 契约 session-schema / capabilities 1.0 定稿；标定与 3D 工具链 + 管线骨架 + 合成数据端到端验证，35 项测试全绿 |
-| batana-pi | active（f976b27） | M0 G0 验证工具链就绪：UVC 冒烟探针 / RKNN 基准 / Yocto 层骨架；EVT 选型 ROCK 5B+ 16GB，相机路线 A（USB3 整模组）优先 |
+| batana-pi | active（eb02621） | M0 G0 验证工具链就绪：UVC 冒烟探针 / RKNN 基准 / Yocto 层骨架；EVT 选型 ROCK 5B+ 16GB；**相机（HBVCAM-W2237-2）已到货，MacBook 首测通过（免驱/USB3 5Gbps/档位属实/真双目），AVFoundation 75fps 上限记录在案** |
 | batana-app | planning（2811fa5） | Flutter 骨架 + M0-V3 高帧率采集探针（平台通道直连 AVFoundation/Camera2） |
 | batana-gui | planning（dc51885） | Qt6/QML 嵌入式 HelloWorld 骨架（eglfs 验证用） |
 | batana-cap | planning（bd23cda） | ble-protocol 1.0 定稿，无代码 |
@@ -79,7 +79,7 @@ batana（本仓库）是 **Batana 生态的司令塔（meta 仓库）**，不含
 
 待办与阻塞：
 
-- M0 G0 硬件验证等物料到货（路线 A USB3 双目模组、ROCK 5B+）：V0a FOV/binning 实测、V0b UVC 120fps 冒烟、V0c 标定初测、V1 NPU 基准——工具链均已就绪
+- M0 G0 剩余项：V0a FOV/binning 实测量角、V0c 标定初测（待标定板）、V1 NPU 基准与 120fps 满速复测（待 ROCK 5B+ 到货）——工具链均已就绪
 - R2/R3：RKNN 转换与 Yocto 构建需 Linux 环境（OrbStack / UTM / 云主机），**用户尚未选定**
 - V3：用户手机是否支持 1080p240 未确认
 
