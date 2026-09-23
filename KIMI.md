@@ -9,6 +9,7 @@ batana（本仓库）是 **Batana 生态的司令塔（meta 仓库）**，不含
 - 产品功能定义与总体架构（`docs/architecture.md`）
 - 模型能力分级 max / pro / standard（`docs/model-tiers.md`）
 - 路线图与项目进度（`docs/roadmap.md`、`repos.yaml`）
+- **生态 UI/UX 统一规范（`docs/uiux-guidelines.md`，所有界面仓必须遵循）**
 - 软硬件版本与兼容矩阵（`repos.yaml`、`docs/versioning.md`）
 - 素材资料与品牌资产（`assets/logo.png`、`docs/assets/`）
 - 子仓库以 git submodule 挂载于 `projects/`，锁定到兼容验证过的版本

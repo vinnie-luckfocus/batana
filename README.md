@@ -23,6 +23,7 @@
 本仓库是 Batana 生态的**司令塔（meta 仓库）**，统一管理：
 
 - 产品功能定义与总体架构：[docs/architecture.md](docs/architecture.md)
+- 生态 UI/UX 统一规范：[docs/uiux-guidelines.md](docs/uiux-guidelines.md)
 - 模型能力分级（max / pro / standard）：[docs/model-tiers.md](docs/model-tiers.md)
 - 生态路线图：[docs/roadmap.md](docs/roadmap.md)
 - 软硬件版本与兼容矩阵：[repos.yaml](repos.yaml) · [docs/versioning.md](docs/versioning.md)
