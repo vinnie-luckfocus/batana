@@ -58,7 +58,7 @@ batana（本仓库）是 **Batana 生态的司令塔（meta 仓库）**，不含
 - 单个文件不超过 800 行
 - 模块文档固定结构：定位 / 功能清单 / 边界（做与不做）/ 技术栈与结构 / 对外契约 / 里程碑映射
 
-## 当前状态（2026-09-21）
+## 当前状态（2026-09-23）
 
 **P0 已完成（契约 1.0 定稿）→ M0 技术验证 spike 进行中（阶段门 G0 → G1 → G2，见 roadmap v0.6）**
 
@@ -68,7 +68,7 @@ batana（本仓库）是 **Batana 生态的司令塔（meta 仓库）**，不含
 |---|---|---|
 | batana-tool | active，**v0.1.0 已发布**（87e8025，tag v0.1.0 + GitHub Release） | **2026-09-23 Tauri 2 重构**：Rust 核心（ffmpeg 采集/检测/落盘/session 导出，64 项测试含 core 契约校验全绿）+ 原生 TS 三页 UI（macOS 原生风，遵循生态 UI/UX 规范）+ logo 图标 + 毛玻璃窗口；PySide6 旧实现归档 tag archive/pyside6 |
 | batana-core | active（b68044a） | 契约 session-schema / capabilities 1.0 定稿；标定与 3D 工具链 + 管线骨架 + 合成数据端到端验证，35 项测试全绿 |
-| batana-pi | active（eb02621） | M0 G0 验证工具链就绪：UVC 冒烟探针 / RKNN 基准 / Yocto 层骨架；EVT 选型 ROCK 5B+ 16GB；**相机（HBVCAM-W2237-2）已到货，MacBook 首测通过（免驱/USB3 5Gbps/档位属实/真双目），AVFoundation 75fps 上限记录在案** |
+| batana-pi | active（44e3c62） | M0 G0 验证工具链就绪：UVC 冒烟探针 / RKNN 基准 / Yocto 层骨架；EVT 选型 ROCK 5B+ 16GB；**相机（HBVCAM-W2237-2）已到货，MacBook 首测通过（免驱/USB3 5Gbps/档位属实/真双目），AVFoundation 75fps 上限记录在案；10 分钟长测 44278 帧无掉帧 @73.9fps** |
 | batana-app | planning（2811fa5） | Flutter 骨架 + M0-V3 高帧率采集探针（平台通道直连 AVFoundation/Camera2） |
 | batana-gui | planning（dc51885） | Qt6/QML 嵌入式 HelloWorld 骨架（eglfs 验证用） |
 | batana-cap | planning（bd23cda） | ble-protocol 1.0 定稿，无代码 |
