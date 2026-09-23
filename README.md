@@ -42,7 +42,7 @@
 | [batana-pi](https://github.com/vinnie-luckfocus/batana-pi) | 双目边缘计算设备（双目相机 + 边缘盒 + 显示屏） | Linux (RK3588) / C++ / Python | active |
 | [batana-cap](https://github.com/vinnie-luckfocus/batana-cap) | 棒尾 IMU 传感器（陀螺仪/加速度计 + 圆屏） | Zephyr RTOS / C | planning |
 | [batana-web](https://github.com/vinnie-luckfocus/batana-web) | Web 管理平台：数据统计 / 趋势 / 多用户数仓 | Next.js / Postgres | planning |
-| [batana-tool](https://github.com/vinnie-luckfocus/batana-tool) | batana-core 素材采集与标注工具（macOS 桌面） | PySide6 / OpenCV / MediaPipe | active |
+| [batana-tool](https://github.com/vinnie-luckfocus/batana-tool) | batana-core 素材采集与标注工具（macOS 桌面，BatanaTool） | Tauri 2 / Rust / TypeScript | active |
 
 各模块功能与边界详见 [docs/modules/](docs/modules/)。
 

@@ -1,7 +1,7 @@
 # Batana 生态仓库清单与版本兼容矩阵（唯一权威登记处）
 # 维护规则：子仓发版 / 契约变更后必须更新本文件。详见 docs/versioning.md
 meta:
-  updated: "2026-09-21"
+  updated: "2026-09-23"
   schema: 1
 
 repos:
@@ -51,12 +51,12 @@ repos:
     progress: 0
     defines_contracts: [sync-api]
   batana-tool:
-    role: batana-core 素材采集与标注工具（macOS 桌面，双目采集 + 语音引导 + 骨架标注）
+    role: batana-core 素材采集与标注工具（macOS 桌面 BatanaTool，Tauri 2 + Rust；双目采集 + 语音引导 + 骨架标注）
     url: https://github.com/vinnie-luckfocus/batana-tool
-    version: null
+    version: v0.5.0
     status: active
     sync_with: batana-core   # 硬同步约束：core 的契约/模型升级时 tool 必须同步升级，combo 绑定验证（见 versioning.md §4）
-    progress: 40
+    progress: 55
 
 contracts:
   # 版本写法：草案期 1.0-draft，固化后 1.0（详见 docs/versioning.md）

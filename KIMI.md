@@ -24,7 +24,7 @@ batana（本仓库）是 **Batana 生态的司令塔（meta 仓库）**，不含
 | batana-pi | 双目边缘计算设备 | Linux (RK3588) / C++ / Python |
 | batana-cap | 棒尾 IMU 传感器 | Zephyr RTOS / C |
 | batana-web | Web 管理平台（统计/趋势/数仓） | Next.js / Postgres |
-| batana-tool | batana-core 素材采集与标注工具（macOS） | PySide6 / OpenCV / MediaPipe |
+| batana-tool | batana-core 素材采集与标注工具（macOS，BatanaTool） | Tauri 2 / Rust / TypeScript |
 
 各模块功能与边界：`docs/modules/<repo>.md`。**跨仓库改动必须先查契约归属表**（见 architecture.md 第 4 节）。
 
@@ -33,6 +33,7 @@ batana（本仓库）是 **Batana 生态的司令塔（meta 仓库）**，不含
 - 2026-09-17：旧 Flutter MVP 方案彻底放弃，代码留存 tag `archive/flutter-mvp` 仅作参考。
 - 2026-09-17：界面层拆分——batana-app（Flutter，iOS/Android/macOS/Windows）+ batana-gui（Qt6 嵌入式，仅 batana-pi 显示屏）。注意：app 虽用 Flutter 但全新实现，不复用旧 MVP 代码。
 - 2026-09-21：弃用 CCPM（Claude Code PM）体系，移除 `.claude/`；项目管理以 roadmap + repos.yaml + 各仓 GitHub Issues 为准。
+- 2026-09-23：batana-tool 基于 Tauri 2 重构（PySide6 实现归档 tag `archive/pyside6`）；生态 UI/UX 统一规范 v1.0 生效（`docs/uiux-guidelines.md`，所有界面仓必须遵循）。
 
 ## 开发规范
 
@@ -65,7 +66,7 @@ batana（本仓库）是 **Batana 生态的司令塔（meta 仓库）**，不含
 
 | 仓库 | 状态 | 说明 |
 |---|---|---|
-| batana-tool | active，v0.4.2+（b954bff） | 采集/检测/导出/标注/环境自检全链路完成，134 项测试全绿；macOS 原生风 UI（NSVisualEffectView 毛玻璃）三轮改版完成；新增 ffmpeg AVFoundation 帧源，实机相机直达 1280x400 MONO8 ~75fps |
+| batana-tool | active，v0.5.0（84bb2d1） | **2026-09-23 Tauri 2 重构**：Rust 核心（ffmpeg 采集/检测/落盘/session 导出，64 项测试含 core 契约校验全绿）+ 原生 TS 三页 UI（macOS 原生风，遵循生态 UI/UX 规范）+ logo 图标 + 毛玻璃窗口；PySide6 旧实现归档 tag archive/pyside6 |
 | batana-core | active（b68044a） | 契约 session-schema / capabilities 1.0 定稿；标定与 3D 工具链 + 管线骨架 + 合成数据端到端验证，35 项测试全绿 |
 | batana-pi | active（eb02621） | M0 G0 验证工具链就绪：UVC 冒烟探针 / RKNN 基准 / Yocto 层骨架；EVT 选型 ROCK 5B+ 16GB；**相机（HBVCAM-W2237-2）已到货，MacBook 首测通过（免驱/USB3 5Gbps/档位属实/真双目），AVFoundation 75fps 上限记录在案** |
 | batana-app | planning（2811fa5） | Flutter 骨架 + M0-V3 高帧率采集探针（平台通道直连 AVFoundation/Camera2） |

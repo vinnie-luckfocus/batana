@@ -1,6 +1,6 @@
 # batana-tool — batana-core 素材采集与标注工具
 
-> 仓库：`vinnie-luckfocus/batana-tool` · 状态：planning
+> 仓库：`vinnie-luckfocus/batana-tool` · 状态：active
 
 ## 定位
 
@@ -22,19 +22,21 @@
 
 ## 技术栈与结构
 
-- PySide6 + OpenCV + MediaPipe · 语音 macOS `say`（Tingting）· 线程模型：CaptureThread → EncodeWorker → PoseWorker → Qt 主线程
+> 2026-09-23 起基于 **Tauri 2（Rust + WebView）** 重构（应用名 BatanaTool）；PySide6 旧实现留存于 tag `archive/pyside6`。UI 遵循 `docs/uiux-guidelines.md`。
+
+- Tauri 2 + Rust（采集/检测/落盘/导出）+ 原生 TypeScript 前端（无框架）· 采集与编码经 ffmpeg 子进程 · 语音 macOS `say` · NSVisualEffectView 毛玻璃
 ```
 batana-tool/
-├── app/
-│   ├── capture/   # UVC 采集、SBS 切分、环缓冲、录像、时间戳
-│   ├── detect/    # ROI 就位检测、挥棒检测、状态机
-│   ├── pose/      # MediaPipe 骨架、叠加渲染、手动修正数据模型
-│   ├── voice/     # TTS 抽象 + macOS say
-│   ├── session/   # 素材索引、审核标记、导出与校验
-│   └── ui/        # 采集页 / 审核页 / 设置页
-├── tests/         # 单测 + 合成视频端到端
-└── samples/       # 合成测试素材生成器
+├── src/             # 前端：三页（采集/素材复核/设置）+ 设计令牌
+├── src-tauri/src/
+│   ├── capture/     # ffmpeg avfoundation 帧源、设备枚举、SBS 切分、环缓冲、FFV1 落盘
+│   ├── detect/      # ROI 就位检测（就位冻结背景）、挥棒运动占比检测
+│   ├── state.rs     # 状态机 IDLE→READY→ARMED→SWING→SAVING
+│   ├── session/     # session-schema 导出、素材库索引、设置持久化
+│   └── voice.rs     # macOS say 语音引导
+└── docs/            # PRD 与评审记录
 ```
+- 测试：`src-tauri` 64 项 Rust 测试（含 batana-core 契约校验集成测试）
 
 ## 对外契约
 
