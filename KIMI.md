@@ -66,7 +66,7 @@ batana（本仓库）是 **Batana 生态的司令塔（meta 仓库）**，不含
 
 | 仓库 | 状态 | 说明 |
 |---|---|---|
-| batana-tool | active，**v0.4.0**（0acd507，Python/PySide6） | **2026-10-08 自 Tauri 切回 Python**（Tauri 2 方案归档 tag archive/tauri，含 120fps 采集/双目预览/对焦模式等修复可供回溯）：**语音引导全面改为预览画面大号视觉提示**（倒计时数字→绿框「挥棒！」→红框「录制中」→绿闪「已保存」，帧驱动零延迟，根治 say 语音延迟导致的挥棒落窗外）；移植 Tauri 期修复（触发持续帧确认/ARMED 宽限期/缓冲 3→5s），142 项测试全绿。历史：2026-09-23 Tauri 2 重构（已归档）；PySide6 旧实现归档 tag archive/pyside6 |
+| batana-tool | active，**v0.4.3**（03b215a，Python/PySide6） | **2026-10-08 实机三连修复**：①审核页切页自动刷新素材列表；②挥棒最长时限 max_swing 3s + 缓冲容量运行时兜底——修复实机取证发现的长 SWING 冲垮环形缓冲、产出 trigger_idx 为负、挥棒起点整段丢失的问题；③节奏控制：SAVING 挂起等落盘确认，保存完成沉淀 3s 再倒计时（「保存中…」→「已保存」→3s→3-2-1），144 项测试全绿。**2026-10-08 自 Tauri 切回 Python**（归档 tag archive/tauri）：语音引导全面改为预览画面大号视觉提示（帧驱动零延迟，根治 say 语音延迟导致的挥棒落窗外）。历史：PySide6 旧实现归档 tag archive/pyside6 |
 | batana-core | active（b68044a） | 契约 session-schema / capabilities 1.0 定稿；标定与 3D 工具链 + 管线骨架 + 合成数据端到端验证，35 项测试全绿 |
 | batana-pi | active（44e3c62） | M0 G0 验证工具链就绪：UVC 冒烟探针 / RKNN 基准 / Yocto 层骨架；EVT 选型 ROCK 5B+ 16GB；**相机（HBVCAM-W2237-2）已到货，MacBook 首测通过（免驱/USB3 5Gbps/档位属实/真双目），AVFoundation 75fps 上限记录在案；10 分钟长测 44278 帧无掉帧 @73.9fps** |
 | batana-app | planning（2811fa5） | Flutter 骨架 + M0-V3 高帧率采集探针（平台通道直连 AVFoundation/Camera2） |

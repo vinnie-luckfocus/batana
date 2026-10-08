@@ -53,7 +53,7 @@ repos:
   batana-tool:
     role: batana-core 素材采集与标注工具（macOS 桌面，PySide6；双目采集 + 预览画面视觉引导 + 骨架标注；2026-10-08 自 Tauri 切回 Python，Tauri 归档 tag archive/tauri）
     url: https://github.com/vinnie-luckfocus/batana-tool
-    version: v0.4.0
+    version: v0.4.3
     status: active
     sync_with: batana-core   # 硬同步约束：core 的契约/模型升级时 tool 必须同步升级，combo 绑定验证（见 versioning.md §4）
     progress: 60
