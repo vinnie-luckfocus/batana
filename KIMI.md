@@ -24,7 +24,7 @@ batana（本仓库）是 **Batana 生态的司令塔（meta 仓库）**，不含
 | batana-pi | 双目边缘计算设备 | Linux (RK3588) / C++ / Python |
 | batana-cap | 棒尾 IMU 传感器 | Zephyr RTOS / C |
 | batana-web | Web 管理平台（统计/趋势/数仓） | Next.js / Postgres |
-| batana-tool | batana-core 素材采集与标注工具（macOS，BatanaTool） | Tauri 2 / Rust / TypeScript |
+| batana-tool | batana-core 素材采集与标注工具（macOS，BatanaTool） | Python / PySide6 |
 
 各模块功能与边界：`docs/modules/<repo>.md`。**跨仓库改动必须先查契约归属表**（见 architecture.md 第 4 节）。
 
@@ -58,17 +58,17 @@ batana（本仓库）是 **Batana 生态的司令塔（meta 仓库）**，不含
 - 单个文件不超过 800 行
 - 模块文档固定结构：定位 / 功能清单 / 边界（做与不做）/ 技术栈与结构 / 对外契约 / 里程碑映射
 
-## 当前状态（2026-09-23）
+## 当前状态（2026-10-12）
 
-**P0 已完成（契约 1.0 定稿）→ M0 技术验证 spike 进行中（阶段门 G0 → G1 → G2，见 roadmap v0.6）**
+**P0 已完成（契约 1.0 定稿）→ M0 技术验证 spike 进行中（阶段门 G0 → G1 → G2，见 roadmap v0.6）；M1.5 素材生产线已闭环，进入量产阶段**
 
 各仓实况：
 
 | 仓库 | 状态 | 说明 |
 |---|---|---|
-| batana-tool | active，**v0.4.3**（03b215a，Python/PySide6） | **2026-10-08 实机三连修复**：①审核页切页自动刷新素材列表；②挥棒最长时限 max_swing 3s + 缓冲容量运行时兜底——修复实机取证发现的长 SWING 冲垮环形缓冲、产出 trigger_idx 为负、挥棒起点整段丢失的问题；③节奏控制：SAVING 挂起等落盘确认，保存完成沉淀 3s 再倒计时（「保存中…」→「已保存」→3s→3-2-1），144 项测试全绿。**2026-10-08 自 Tauri 切回 Python**（归档 tag archive/tauri）：语音引导全面改为预览画面大号视觉提示（帧驱动零延迟，根治 say 语音延迟导致的挥棒落窗外）。历史：PySide6 旧实现归档 tag archive/pyside6 |
-| batana-core | active（b68044a） | 契约 session-schema / capabilities 1.0 定稿；标定与 3D 工具链 + 管线骨架 + 合成数据端到端验证，35 项测试全绿 |
-| batana-pi | active（44e3c62） | M0 G0 验证工具链就绪：UVC 冒烟探针 / RKNN 基准 / Yocto 层骨架；EVT 选型 ROCK 5B+ 16GB；**相机（HBVCAM-W2237-2）已到货，MacBook 首测通过（免驱/USB3 5Gbps/档位属实/真双目），AVFoundation 75fps 上限记录在案；10 分钟长测 44278 帧无掉帧 @73.9fps** |
+| batana-tool | active，**v0.4.4**（4b6c294，Python/PySide6） | **素材生产线全链闭环（2026-10-12）**：采集（120fps 双目 + 视觉引导节奏控制）→ 审核 → **真实骨架标注**（MediaPipe pose_landmarker_full，置信度 0.74/24 点可见，实测叠加击球员）→ 手动修正 → 导出（过 core 全量校验）。修复"跑骨架静默 Stub 假骨架"（mediapipe 未装+模型未配置无提示）；模型工件归属 core（自动探测 core 仓 models/files/，Stub 兜底显式标注）。前序：10-08 自 Tauri 切回 Python + 实机三连修复（列表刷新/缓冲溢出丢挥棒/节奏沉淀） |
+| batana-core | active（520dc5f） | 契约 session-schema / capabilities 1.0 定稿；标定与 3D 工具链 + 管线骨架 + 合成数据端到端验证，35 项测试全绿；**models/registry.yaml 首个模型工件登记（mediapipe-pose-landmarker-full，pose2d 标注基础模型，权重不入库按 uri+sha256 自取）** |
+| batana-pi | active（44e3c62） | M0 G0 验证工具链就绪：UVC 冒烟探针 / RKNN 基准 / Yocto 层骨架；EVT 选型 ROCK 5B+ 16GB；相机（HBVCAM-W2237-2）MacBook 首测通过，10 分钟长测无掉帧；**tool 侧实测 1280x400@120 可满速（120.2fps，2026-10-08 素材时间戳实证），AVFoundation 75fps 上限系旧 OpenCV 路径结论，ffmpeg 后端已突破** |
 | batana-app | planning（2811fa5） | Flutter 骨架 + M0-V3 高帧率采集探针（平台通道直连 AVFoundation/Camera2） |
 | batana-gui | planning（dc51885） | Qt6/QML 嵌入式 HelloWorld 骨架（eglfs 验证用） |
 | batana-cap | planning（bd23cda） | ble-protocol 1.0 定稿，无代码 |
@@ -77,13 +77,31 @@ batana（本仓库）是 **Batana 生态的司令塔（meta 仓库）**，不含
 已验证的跨仓配合：
 
 - **core↔tool 硬同步实测通过（2026-09-21）**：tool 全管线产出的 session 经 core `tools/validate_session.py` 全量校验通过
+- **core 模型工件 → tool 引用链路打通（2026-10-12）**：tool 自动探测 core 仓 models/files/ 的 pose 模型，真实素材骨架叠加验证通过
 - 契约矩阵见 `repos.yaml`：session-schema / capabilities / ble-protocol / sync-api 均 1.0 稳定；device-interfaces 1.0-draft；runtime-api 待 P1
 
-待办与阻塞：
+### 进度节奏复盘（2026-10-12）
 
-- M0 G0 剩余项：V0a FOV/binning 实测量角、V0c 标定初测（待标定板）、V1 NPU 基准与 120fps 满速复测（待 ROCK 5B+ 到货）——工具链均已就绪
+**节奏判断：软件线超前，硬件线停滞在物料等待——整体健康，M1.5 是当前主战场。**
+
+- M0 G0 计划 D1–D7，实际已 ~3 周：V0b 通过（且 tool 实证 120fps 满速），V0a 量角/V0c 标定待标定板，V1/V4 待 ROCK 5B+，R2/R3 待 Linux 环境选定。**阻塞全部是物料/环境，非技术不确定性**——符合阶段门设计意图（先花小钱排大雷），等待期没有空转：tool 从能录进化到能标注。
+- M1.5（≥200 段标注素材，真值子集 ≥50 段）原定 G1 启动，实际 G0 期已提前采集 26 段，今日标注链路闭环后**具备量产条件**。当前缺口：已标注 0 段；真值子集所需雷达枪/高速摄影**尚未安排采购或借用**，是 M1.5 下一阻塞点。
+- M1.1 core 管线目前只跑过合成数据；素材量产后应立即转入**真实素材联调**（姿态→相位→评分链路），让数据问题在早期暴露。
+
+下一步优先级（按解锁价值排序）：
+
+1. **素材量产**：按节奏采集+标注（建议每周 ≥50 段，4 周达成 200 段）；标注即跑骨架+人工修正+标记合格
+2. **core 真实素材联调**：用已标注素材跑 core 管线，替代纯合成数据验证
+3. 真值采集安排：雷达枪/高速摄影（借用优先），解锁 ≥50 段真值子集
+4. 标定板到货 → V0c 标定初测（解锁双目 3D）；ROCK 5B+ 到货 → V1/V4
+5. Linux 环境选定（OrbStack / UTM / 云主机）→ 解锁 RKNN 转换与 Yocto 构建
+
+### 待办与阻塞
+
+- M0 G0 剩余项：V0a FOV/binning 实测量角（MacBook 可做，只需量角参照物）、V0c 标定初测（待标定板）、V1 NPU 基准与 V4 120fps 复测（待 ROCK 5B+ 到货）
 - R2/R3：RKNN 转换与 Yocto 构建需 Linux 环境（OrbStack / UTM / 云主机），**用户尚未选定**
 - V3：用户手机是否支持 1080p240 未确认
+- M1.5 真值子集：雷达枪/高速摄影未安排
 
 ## 核心原则
 
