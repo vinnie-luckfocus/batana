@@ -66,7 +66,7 @@ batana（本仓库）是 **Batana 生态的司令塔（meta 仓库）**，不含
 
 | 仓库 | 状态 | 说明 |
 |---|---|---|
-| batana-tool | active，**v0.4.4**（4b6c294，Python/PySide6） | **素材生产线全链闭环（2026-10-12）**：采集（120fps 双目 + 视觉引导节奏控制）→ 审核 → **真实骨架标注**（MediaPipe pose_landmarker_full，置信度 0.74/24 点可见，实测叠加击球员）→ 手动修正 → 导出（过 core 全量校验）。修复"跑骨架静默 Stub 假骨架"（mediapipe 未装+模型未配置无提示）；模型工件归属 core（自动探测 core 仓 models/files/，Stub 兜底显式标注）。前序：10-08 自 Tauri 切回 Python + 实机三连修复（列表刷新/缓冲溢出丢挥棒/节奏沉淀） |
+| batana-tool | active，**v0.4.5**（3155bec，Python/PySide6） | **素材生产线全链闭环 + 标注效率三优化（2026-10-12）**：采集（120fps 双目 + 视觉引导节奏控制）→ 审核 → 真实骨架标注（MediaPipe pose_landmarker_full，实测叠加击球员）→ 手动修正（**悬停中文关节名 + 左右肢体分色**；**连续错位传播修正**——偏移量逐帧扩散、自动恢复即停、整批撤销；**简化手部**仅手腕可编辑、数据仍 33 点全量）→ 导出（过 core 全量校验）。模型工件归属 core（自动探测 models/files/）。148 项测试全绿 |
 | batana-core | active（520dc5f） | 契约 session-schema / capabilities 1.0 定稿；标定与 3D 工具链 + 管线骨架 + 合成数据端到端验证，35 项测试全绿；**models/registry.yaml 首个模型工件登记（mediapipe-pose-landmarker-full，pose2d 标注基础模型，权重不入库按 uri+sha256 自取）** |
 | batana-pi | active（44e3c62） | M0 G0 验证工具链就绪：UVC 冒烟探针 / RKNN 基准 / Yocto 层骨架；EVT 选型 ROCK 5B+ 16GB；相机（HBVCAM-W2237-2）MacBook 首测通过，10 分钟长测无掉帧；**tool 侧实测 1280x400@120 可满速（120.2fps，2026-10-08 素材时间戳实证），AVFoundation 75fps 上限系旧 OpenCV 路径结论，ffmpeg 后端已突破** |
 | batana-app | planning（2811fa5） | Flutter 骨架 + M0-V3 高帧率采集探针（平台通道直连 AVFoundation/Camera2） |
