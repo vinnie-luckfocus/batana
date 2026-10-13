@@ -78,7 +78,7 @@ batana（本仓库）是 **Batana 生态的司令塔（meta 仓库）**，不含
 
 - **core↔tool 硬同步实测通过（2026-09-21）**：tool 全管线产出的 session 经 core `tools/validate_session.py` 全量校验通过
 - **core 模型工件 → tool 引用链路打通（2026-10-12）**：tool 自动探测 core 仓 models/files/ 的 pose 模型，真实素材骨架叠加验证通过
-- **core 3D 管线经 tool 集成路径端到端验证（2026-10-13）**：tool 抽帧 → core ChArUco 标定（合成装置渲染帧：基线恢复 100.05mm/真值 100mm，立体 RMS 0.094px）；tool 双骨架 → core 批量三角化 → pose3d（真参标定下重建误差中位 <0.001mm，骨长/深度合理性报告判「链路合理」）。真实素材精度结论仍待标定板到货走 V0c
+- **core 3D 管线经 tool 集成路径端到端验证（2026-10-13）**：tool 抽帧 → core ChArUco 标定（合成装置渲染帧：基线恢复 100.05mm/真值 100mm，立体 RMS 0.094px）；tool 双骨架 → core 批量三角化 → pose3d（真参标定下重建误差中位 <0.001mm，骨长/深度合理性报告判「链路合理」）。**真实素材冒烟（4 段双骨架旧片段，640×400/眼 + 名义标定）**：深度中位 2.1–2.45m 与实际架设吻合、Z>0 ≈99%、骨长中位数合理（上臂 0.37m/肩宽 0.31m），链路可用；暴露的下一步问题——原始逐帧三角化对双目 2D 抖动敏感（骨长帧间 CV 超标，野值帧为 MediaPipe 双目对应不一致所致），core 管线需时序滤波与低置信对应点剔除，且真实标定 + 1280×720 档位可显著降噪声。真实素材精度结论仍待标定板到货走 V0c
 - 契约矩阵见 `repos.yaml`：session-schema / capabilities / ble-protocol / sync-api 均 1.0 稳定；device-interfaces 1.0-draft；runtime-api 待 P1
 
 ### 进度节奏复盘（2026-10-12）
