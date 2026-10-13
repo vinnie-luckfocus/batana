@@ -58,16 +58,16 @@ batana（本仓库）是 **Batana 生态的司令塔（meta 仓库）**，不含
 - 单个文件不超过 800 行
 - 模块文档固定结构：定位 / 功能清单 / 边界（做与不做）/ 技术栈与结构 / 对外契约 / 里程碑映射
 
-## 当前状态（2026-10-13）
+## 当前状态（2026-10-14）
 
-**P0 已完成（契约 1.0 定稿）→ M0 技术验证 spike 进行中（阶段门 G0 → G1 → G2，见 roadmap v0.6）；M1.5 素材生产线已闭环，进入量产阶段；tool v0.5.0 新增标定与 3D 重建，core 3D 管线经 tool 集成路径端到端验证通过**
+**P0 已完成（契约 1.0 定稿）→ M0 技术验证 spike 进行中（阶段门 G0 → G1 → G2，见 roadmap v0.6）；M1.5 素材生产线已闭环，进入量产阶段；tool v0.5.1 标定与 3D 重建实机故障修复，真实素材 3D 重建全量通过（精度 B/C）**
 
 各仓实况：
 
 | 仓库 | 状态 | 说明 |
 |---|---|---|
-| batana-tool | active，**v0.5.0**（2edab72，Python/PySide6） | **新增相机标定 + 姿态 3D 重建（2026-10-13）**：设置页标定区块（片段抽帧 → 调 core ChArUco 标定 → 存档 ~/.batana-tool/calibration.json；无标定板时可生成名义标定——基线 120mm 规格估算，仅供链路冒烟）；审核页「3D 重建」（双骨架 → 调 core 批量三角化 → pose3d.json + 骨长/深度合理性报告）；导出 session 自动附标定。既有：采集（120fps 双目 + 视觉引导节奏控制）→ 审核 → 真实骨架标注（MediaPipe pose_landmarker_full）→ 传播修正 → 导出（过 core 全量校验）。171 项测试全绿 |
-| batana-core | active（efd57e6） | 契约 session-schema / capabilities 1.0 定稿；标定与 3D 工具链 + 管线骨架 + 合成数据端到端验证；models/registry.yaml 首个模型工件登记；**triangulate 新增批量模式（多帧双目对应点一次出 3D 序列，供 tool 姿态 3D 重建调用）**，40 项测试全绿 |
+| batana-tool | active，**v0.5.1**（be6f83b，Python/PySide6） | 标定（设置页：抽帧 → 调 core ChArUco 标定 → 存档；名义标定兜底仅供冒烟）+ 3D 重建（审核页：双骨架 → core 批量三角化 → pose3d.json + 合理性报告「链路判定 + 精度 A/B/C」两维口径）；导出 session 自动附标定。**2026-10-14 实机修复**：双目跑骨架右目初始偏移（根因：两目共用同一 MediaPipe 估计器实例，VIDEO 模式跟踪状态跨目续跑；改为估计器工厂每目独立实例）；直接 MediaPipe 骨架 3D 重建判异常无法通过（根因：逐帧 2D 抖动 + 双目对应不一致被裸三角化放大；修复：三角化前时序中值平滑 + visibility 掩蔽 + 极线校正，报告改鲁棒统计分层）。既有：采集（120fps 双目 + 视觉引导）→ 审核 → 骨架标注 → 传播修正 → 导出（过 core 全量校验）。177 项测试全绿 |
+| batana-core | active（4d90f40） | 契约 session-schema / capabilities 1.0 定稿；标定与 3D 工具链 + 管线骨架 + 合成数据端到端验证；models/registry.yaml 首个模型工件登记；triangulate 批量模式 + **三角化前处理（时序中值平滑 / visibility 掩蔽 / 极线校正）**，51 项测试全绿 |
 | batana-pi | active（44e3c62） | M0 G0 验证工具链就绪：UVC 冒烟探针 / RKNN 基准 / Yocto 层骨架；EVT 选型 ROCK 5B+ 16GB；相机（HBVCAM-W2237-2）MacBook 首测通过，10 分钟长测无掉帧；**tool 侧实测 1280x400@120 可满速（120.2fps，2026-10-08 素材时间戳实证），AVFoundation 75fps 上限系旧 OpenCV 路径结论，ffmpeg 后端已突破** |
 | batana-app | planning（2811fa5） | Flutter 骨架 + M0-V3 高帧率采集探针（平台通道直连 AVFoundation/Camera2） |
 | batana-gui | planning（dc51885） | Qt6/QML 嵌入式 HelloWorld 骨架（eglfs 验证用） |
@@ -78,7 +78,7 @@ batana（本仓库）是 **Batana 生态的司令塔（meta 仓库）**，不含
 
 - **core↔tool 硬同步实测通过（2026-09-21）**：tool 全管线产出的 session 经 core `tools/validate_session.py` 全量校验通过
 - **core 模型工件 → tool 引用链路打通（2026-10-12）**：tool 自动探测 core 仓 models/files/ 的 pose 模型，真实素材骨架叠加验证通过
-- **core 3D 管线经 tool 集成路径端到端验证（2026-10-13）**：tool 抽帧 → core ChArUco 标定（合成装置渲染帧：基线恢复 100.05mm/真值 100mm，立体 RMS 0.094px）；tool 双骨架 → core 批量三角化 → pose3d（真参标定下重建误差中位 <0.001mm，骨长/深度合理性报告判「链路合理」）。**真实素材冒烟（4 段双骨架旧片段，640×400/眼 + 名义标定）**：深度中位 2.1–2.45m 与实际架设吻合、Z>0 ≈99%、骨长中位数合理（上臂 0.37m/肩宽 0.31m），链路可用；暴露的下一步问题——原始逐帧三角化对双目 2D 抖动敏感（骨长帧间 CV 超标，野值帧为 MediaPipe 双目对应不一致所致），core 管线需时序滤波与低置信对应点剔除，且真实标定 + 1280×720 档位可显著降噪声。真实素材精度结论仍待标定板到货走 V0c
+- **core 3D 管线经 tool 集成路径端到端验证（2026-10-13）**：tool 抽帧 → core ChArUco 标定（合成装置渲染帧：基线恢复 100.05mm/真值 100mm，立体 RMS 0.094px）；tool 双骨架 → core 批量三角化 → pose3d（真参标定下重建误差中位 <0.001mm，骨长/深度合理性报告判「链路合理」）。**真实素材冒烟（4 段双骨架旧片段，640×400/眼 + 名义标定）**：深度中位 2.1–2.45m 与实际架设吻合、Z>0 ≈99%、骨长中位数合理（上臂 0.37m/肩宽 0.31m），链路可用；暴露的下一步问题——原始逐帧三角化对双目 2D 抖动敏感（骨长帧间 CV 超标，野值帧为 MediaPipe 双目对应不一致所致），core 管线需时序滤波与低置信对应点剔除，且真实标定 + 1280×720 档位可显著降噪声。**已闭环（2026-10-14，tool v0.5.1 + core 4d90f40）**：三角化前平滑/掩蔽/极线校正 + 报告两维分层后，4 段真实片段全部判「链路合理」（精度 B×1 / C×3，C 为 640×400 旧档位的数据噪声下限，附升级建议）。真实素材精度结论仍待标定板到货走 V0c
 - 契约矩阵见 `repos.yaml`：session-schema / capabilities / ble-protocol / sync-api 均 1.0 稳定；device-interfaces 1.0-draft；runtime-api 待 P1
 
 ### 进度节奏复盘（2026-10-12）
