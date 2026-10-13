@@ -58,16 +58,16 @@ batana（本仓库）是 **Batana 生态的司令塔（meta 仓库）**，不含
 - 单个文件不超过 800 行
 - 模块文档固定结构：定位 / 功能清单 / 边界（做与不做）/ 技术栈与结构 / 对外契约 / 里程碑映射
 
-## 当前状态（2026-10-12）
+## 当前状态（2026-10-13）
 
-**P0 已完成（契约 1.0 定稿）→ M0 技术验证 spike 进行中（阶段门 G0 → G1 → G2，见 roadmap v0.6）；M1.5 素材生产线已闭环，进入量产阶段**
+**P0 已完成（契约 1.0 定稿）→ M0 技术验证 spike 进行中（阶段门 G0 → G1 → G2，见 roadmap v0.6）；M1.5 素材生产线已闭环，进入量产阶段；tool v0.5.0 新增标定与 3D 重建，core 3D 管线经 tool 集成路径端到端验证通过**
 
 各仓实况：
 
 | 仓库 | 状态 | 说明 |
 |---|---|---|
-| batana-tool | active，**v0.4.5**（3155bec，Python/PySide6） | **素材生产线全链闭环 + 标注效率三优化（2026-10-12）**：采集（120fps 双目 + 视觉引导节奏控制）→ 审核 → 真实骨架标注（MediaPipe pose_landmarker_full，实测叠加击球员）→ 手动修正（**悬停中文关节名 + 左右肢体分色**；**连续错位传播修正**——偏移量逐帧扩散、自动恢复即停、整批撤销；**简化手部**仅手腕可编辑、数据仍 33 点全量）→ 导出（过 core 全量校验）。模型工件归属 core（自动探测 models/files/）。148 项测试全绿 |
-| batana-core | active（520dc5f） | 契约 session-schema / capabilities 1.0 定稿；标定与 3D 工具链 + 管线骨架 + 合成数据端到端验证，35 项测试全绿；**models/registry.yaml 首个模型工件登记（mediapipe-pose-landmarker-full，pose2d 标注基础模型，权重不入库按 uri+sha256 自取）** |
+| batana-tool | active，**v0.5.0**（2edab72，Python/PySide6） | **新增相机标定 + 姿态 3D 重建（2026-10-13）**：设置页标定区块（片段抽帧 → 调 core ChArUco 标定 → 存档 ~/.batana-tool/calibration.json；无标定板时可生成名义标定——基线 120mm 规格估算，仅供链路冒烟）；审核页「3D 重建」（双骨架 → 调 core 批量三角化 → pose3d.json + 骨长/深度合理性报告）；导出 session 自动附标定。既有：采集（120fps 双目 + 视觉引导节奏控制）→ 审核 → 真实骨架标注（MediaPipe pose_landmarker_full）→ 传播修正 → 导出（过 core 全量校验）。171 项测试全绿 |
+| batana-core | active（efd57e6） | 契约 session-schema / capabilities 1.0 定稿；标定与 3D 工具链 + 管线骨架 + 合成数据端到端验证；models/registry.yaml 首个模型工件登记；**triangulate 新增批量模式（多帧双目对应点一次出 3D 序列，供 tool 姿态 3D 重建调用）**，40 项测试全绿 |
 | batana-pi | active（44e3c62） | M0 G0 验证工具链就绪：UVC 冒烟探针 / RKNN 基准 / Yocto 层骨架；EVT 选型 ROCK 5B+ 16GB；相机（HBVCAM-W2237-2）MacBook 首测通过，10 分钟长测无掉帧；**tool 侧实测 1280x400@120 可满速（120.2fps，2026-10-08 素材时间戳实证），AVFoundation 75fps 上限系旧 OpenCV 路径结论，ffmpeg 后端已突破** |
 | batana-app | planning（2811fa5） | Flutter 骨架 + M0-V3 高帧率采集探针（平台通道直连 AVFoundation/Camera2） |
 | batana-gui | planning（dc51885） | Qt6/QML 嵌入式 HelloWorld 骨架（eglfs 验证用） |
@@ -78,6 +78,7 @@ batana（本仓库）是 **Batana 生态的司令塔（meta 仓库）**，不含
 
 - **core↔tool 硬同步实测通过（2026-09-21）**：tool 全管线产出的 session 经 core `tools/validate_session.py` 全量校验通过
 - **core 模型工件 → tool 引用链路打通（2026-10-12）**：tool 自动探测 core 仓 models/files/ 的 pose 模型，真实素材骨架叠加验证通过
+- **core 3D 管线经 tool 集成路径端到端验证（2026-10-13）**：tool 抽帧 → core ChArUco 标定（合成装置渲染帧：基线恢复 100.05mm/真值 100mm，立体 RMS 0.094px）；tool 双骨架 → core 批量三角化 → pose3d（真参标定下重建误差中位 <0.001mm，骨长/深度合理性报告判「链路合理」）。真实素材精度结论仍待标定板到货走 V0c
 - 契约矩阵见 `repos.yaml`：session-schema / capabilities / ble-protocol / sync-api 均 1.0 稳定；device-interfaces 1.0-draft；runtime-api 待 P1
 
 ### 进度节奏复盘（2026-10-12）
