@@ -66,7 +66,7 @@ batana（本仓库）是 **Batana 生态的司令塔（meta 仓库）**，不含
 
 | 仓库 | 状态 | 说明 |
 |---|---|---|
-| batana-tool | active，**v0.5.1**（be6f83b，Python/PySide6） | 标定（设置页：抽帧 → 调 core ChArUco 标定 → 存档；名义标定兜底仅供冒烟）+ 3D 重建（审核页：双骨架 → core 批量三角化 → pose3d.json + 合理性报告「链路判定 + 精度 A/B/C」两维口径）；导出 session 自动附标定。**2026-10-14 实机修复**：双目跑骨架右目初始偏移（根因：两目共用同一 MediaPipe 估计器实例，VIDEO 模式跟踪状态跨目续跑；改为估计器工厂每目独立实例）；直接 MediaPipe 骨架 3D 重建判异常无法通过（根因：逐帧 2D 抖动 + 双目对应不一致被裸三角化放大；修复：三角化前时序中值平滑 + visibility 掩蔽 + 极线校正，报告改鲁棒统计分层）。既有：采集（120fps 双目 + 视觉引导）→ 审核 → 骨架标注 → 传播修正 → 导出（过 core 全量校验）。177 项测试全绿 |
+| batana-tool | active，**v0.6.0**（b17fb5b，Python/PySide6） | **新增 3D 骨架查看器（2026-10-14）**：OpenGL 骨架模型 + 动画播放（orbit 旋转/缩放/平移、0.25–1× 速度档、地面网格），审核页「查看 3D」独立非模态窗口，与走带帧单向同步；掩蔽关节跳过绘制。标定 + 3D 重建（链路判定 + 精度 A/B/C 两维口径报告）与实机修复见 v0.5.x 记录。既有：采集（120fps 双目 + 视觉引导）→ 审核 → 骨架标注 → 传播修正 → 导出（过 core 全量校验）。189 项测试全绿（1 项 GL offscreen smoke 按约定 skip） |
 | batana-core | active（4d90f40） | 契约 session-schema / capabilities 1.0 定稿；标定与 3D 工具链 + 管线骨架 + 合成数据端到端验证；models/registry.yaml 首个模型工件登记；triangulate 批量模式 + **三角化前处理（时序中值平滑 / visibility 掩蔽 / 极线校正）**，51 项测试全绿 |
 | batana-pi | active（44e3c62） | M0 G0 验证工具链就绪：UVC 冒烟探针 / RKNN 基准 / Yocto 层骨架；EVT 选型 ROCK 5B+ 16GB；相机（HBVCAM-W2237-2）MacBook 首测通过，10 分钟长测无掉帧；**tool 侧实测 1280x400@120 可满速（120.2fps，2026-10-08 素材时间戳实证），AVFoundation 75fps 上限系旧 OpenCV 路径结论，ffmpeg 后端已突破** |
 | batana-app | planning（2811fa5） | Flutter 骨架 + M0-V3 高帧率采集探针（平台通道直连 AVFoundation/Camera2） |
